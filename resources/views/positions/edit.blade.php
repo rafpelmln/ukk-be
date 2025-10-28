@@ -31,8 +31,15 @@
             @method('PUT')
 
             <div class="space-y-2">
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Slug Posisi</label>
+                <input type="text" name="slug" value="{{ old('slug', $position->slug) }}" required placeholder="contoh: pengurus_pusat, guest, anggota" class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-indigo-400">
+                <p class="text-xs text-slate-500 dark:text-slate-400">Gunakan huruf kecil, angka, dan underscore saja. Ini digunakan untuk identifikasi internal.</p>
+            </div>
+
+            <div class="space-y-2">
                 <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Nama Posisi</label>
-                <input type="text" name="name" value="{{ old('name', $position->name) }}" required class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-indigo-400">
+                <input type="text" name="name" value="{{ old('name', $position->name) }}" required placeholder="contoh: Pengurus Pusat, Tamu, Anggota" class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-indigo-400">
+                <p class="text-xs text-slate-500 dark:text-slate-400">Nama yang akan ditampilkan kepada pengguna.</p>
             </div>
 
             <label class="inline-flex items-center gap-3">

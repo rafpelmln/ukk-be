@@ -17,6 +17,7 @@ class Position extends Model
 
     protected $fillable = [
         'id',
+        'slug',
         'name',
         'is_active',
     ];

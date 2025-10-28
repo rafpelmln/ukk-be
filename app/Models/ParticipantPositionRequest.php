@@ -20,6 +20,8 @@ class ParticipantPositionRequest extends Model
         'participants_id',
         'position_id',
         'status',
+        'notes',
+        'admin_notes',
     ];
 
     protected static function booted(): void

@@ -19,7 +19,8 @@ class PositionController extends Controller
 
         $positions = Position::query()
             ->when($search !== '', function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%");
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('slug', 'like', "%{$search}%");
             })
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)
@@ -40,7 +41,8 @@ class PositionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('positions', 'name')],
+            'slug' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9_]+$/', Rule::unique('positions', 'slug')],
+            'name' => ['required', 'string', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
         ]);
 
@@ -64,7 +66,8 @@ class PositionController extends Controller
     public function update(Request $request, Position $position): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('positions', 'name')->ignore($position->getKey())],
+            'slug' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9_]+$/', Rule::unique('positions', 'slug')->ignore($position->getKey())],
+            'name' => ['required', 'string', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
         ]);
 
