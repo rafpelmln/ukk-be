@@ -46,6 +46,7 @@
             <table class="min-w-full divide-y divide-slate-200 text-sm dark:divide-slate-800">
                 <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-800 dark:text-slate-300">
                     <tr>
+                        <th class="px-6 py-3">Slug</th>
                         <th class="px-6 py-3">Nama</th>
                         <th class="px-6 py-3">Status</th>
                         <th class="px-6 py-3">Dibuat</th>
@@ -55,6 +56,9 @@
                 <tbody class="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-900">
                     @forelse ($positions as $position)
                         <tr>
+                            <td class="px-6 py-4">
+                                <code class="inline-flex rounded bg-slate-100 px-2 py-1 text-sm font-mono text-slate-600 dark:bg-slate-800 dark:text-slate-300">{{ $position->slug }}</code>
+                            </td>
                             <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white">{{ $position->name }}</td>
                             <td class="px-6 py-4">
                                 <form action="{{ route('positions.toggle', $position) }}" method="POST" class="inline">
@@ -86,7 +90,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
+                            <td colspan="5" class="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
                                 Belum ada posisi yang tersedia.
                             </td>
                         </tr>
