@@ -14,12 +14,18 @@ class GenerationController extends Controller
 {
     public function index(Request $request): View
     {
+        $search = trim((string) $request->query('query'));
         $perPage = (int) $request->query('per_page', 10);
+        $perPage = in_array($perPage, [10, 25, 50, 100], true) ? $perPage : 10;
 
         $generations = Generation::query()
             ->withCount('participants')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhere('singkatan', 'like', "%{$search}%");
+            })
             ->orderByDesc('created_at')
-            ->paginate(in_array($perPage, [10, 25, 50, 100], true) ? $perPage : 10)
+            ->paginate($perPage)
             ->withQueryString();
 
         $leaders = Participant::query()
@@ -30,6 +36,8 @@ class GenerationController extends Controller
         return view('generations.index', [
             'generations' => $generations,
             'leaders' => $leaders,
+            'search' => $search,
+            'perPage' => $perPage,
         ]);
     }
 

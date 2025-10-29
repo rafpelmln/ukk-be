@@ -29,19 +29,17 @@
         @endif
 
         <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <form method="GET" action="{{ route('generations.index') }}" class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                <div class="relative flex-1 sm:w-80">
+                    <input type="search" name="query" value="{{ $search ?? '' }}" placeholder="Cari nama atau singkatan" class="w-full rounded-lg border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 text-sm text-slate-700 shadow-sm transition focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-indigo-500">
+                    <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                </div>
+            </form>
             <div class="text-sm text-slate-500 dark:text-slate-400">
                 Total generasi: <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $generations->total() }}</span>
             </div>
-            <form method="GET" action="{{ route('generations.index') }}" class="flex items-center gap-2 text-sm">
-                <label for="per-page" class="text-slate-500 dark:text-slate-400">Tampilkan</label>
-                <select id="per-page" name="per_page" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-indigo-400 focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
-                    @foreach ([10, 25, 50, 100] as $option)
-                        <option value="{{ $option }}" @selected($generations->perPage() === $option)>{{ $option }}</option>
-                    @endforeach
-                </select>
-                <span class="text-slate-500 dark:text-slate-400">per halaman</span>
-                <button type="submit" class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-indigo-400 hover:text-indigo-600 dark:border-slate-700 dark:text-slate-300 dark:hover:border-indigo-400 dark:hover:text-indigo-300">Atur</button>
-            </form>
         </div>
 
         <div class="mt-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800">
@@ -106,6 +104,22 @@
 
         <div class="mt-6">
             {{ $generations->withQueryString()->links('vendor.pagination.tailwind-simple') }}
+        </div>
+        <div class="mt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <form method="GET" action="{{ route('generations.index') }}" class="flex w-full flex-col gap-3 md:w-auto md:flex-row md:items-center">
+                <div class="flex items-center gap-2">
+                    <label for="generations-per-page-bottom" class="text-sm text-slate-500 dark:text-slate-400">Tampilkan</label>
+                    <select id="generations-per-page-bottom" name="per_page" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-indigo-400 focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                        @foreach ([10, 25, 50, 100] as $option)
+                            <option value="{{ $option }}" @selected(($perPage ?? $generations->perPage()) === $option)>{{ $option }}</option>
+                        @endforeach
+                    </select>
+                    <span class="text-sm text-slate-500 dark:text-slate-400">per halaman</span>
+                </div>
+                <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-indigo-400 hover:text-indigo-600 dark:border-slate-700 dark:text-slate-300 dark:hover:border-indigo-400 dark:hover:text-indigo-300">
+                    Terapkan
+                </button>
+            </form>
         </div>
     </div>
 </x-app-layout>
