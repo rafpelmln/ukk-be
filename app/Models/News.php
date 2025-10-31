@@ -21,6 +21,11 @@ class News extends Model
         'author',
     ];
 
+    /**
+     * Append computed attributes to model JSON form for API
+     */
+    protected $appends = ['photo_url'];
+
     // generate uuid id when creating
     protected static function booted()
     {
@@ -43,5 +48,23 @@ class News extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'news_tags_pivots', 'news_id', 'tag_id');
+    }
+
+    /**
+     * Return publicly accessible photo URL for API consumers.
+     */
+    public function getPhotoUrlAttribute()
+    {
+        if (empty($this->photo)) {
+            return null;
+        }
+
+        // If photo is stored in public/foto path, return direct asset
+        if (str_starts_with($this->photo, 'foto/')) {
+            return asset($this->photo);
+        }
+
+        // Otherwise assume it's storage path and use storage URL
+        return asset('storage/' . $this->photo);
     }
 }

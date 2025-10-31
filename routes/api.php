@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthParticipantsController;
+use App\Http\Controllers\Api\NewsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -21,3 +22,7 @@ Route::delete('/position-requests/{id}', [PositionRequestController::class, 'des
 Route::get('/test', function () {
     return response()->json(['message' => 'API is working', 'timestamp' => now()]);
 });
+
+// News 
+Route::get('/news', [NewsController::class, 'index']);
+Route::get('/news/{id}', [NewsController::class, 'show']);
