@@ -59,12 +59,14 @@ class NewsController extends Controller
     public function create()
     {
         $allTags = \App\Models\Tag::where('is_active', true)->orderBy('name')->get();
-        return view('news.create', compact('allTags'));
+        $categories = \App\Models\NewsCategory::where('is_active', true)->orderBy('name')->get();
+        return view('news.create', compact('allTags', 'categories'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
+            'category_id' => 'nullable|exists:news_categories,id',
             'title' => 'required|string|max:255',
             'slug' => ['nullable', 'string', 'max:255', Rule::unique('news', 'slug')],
             'subtitle' => 'nullable|string|max:255',
@@ -126,13 +128,15 @@ class NewsController extends Controller
     public function edit(News $news)
     {
         $allTags = \App\Models\Tag::where('is_active', true)->orderBy('name')->get();
+        $categories = \App\Models\NewsCategory::where('is_active', true)->orderBy('name')->get();
         $selectedTags = $news->tags()->pluck('tags.id')->toArray();
-        return view('news.edit', compact('news', 'allTags', 'selectedTags'));
+        return view('news.edit', compact('news', 'allTags', 'categories', 'selectedTags'));
     }
 
     public function update(Request $request, News $news)
     {
         $data = $request->validate([
+            'category_id' => 'nullable|exists:news_categories,id',
             'title' => 'required|string|max:255',
             'slug' => ['nullable', 'string', 'max:255', Rule::unique('news', 'slug')->ignore($news->getKey())],
             'subtitle' => 'nullable|string|max:255',

@@ -13,6 +13,7 @@ class News extends Model
 
     protected $fillable = [
         'id',
+        'category_id',
         'slug',
         'title',
         'subtitle',
@@ -35,6 +36,14 @@ class News extends Model
     public function getRouteKeyName()
     {
         return 'slug';
+    }
+
+    /**
+     * Category relation (belongs to)
+     */
+    public function category()
+    {
+        return $this->belongsTo(NewsCategory::class, 'category_id');
     }
 
     /**

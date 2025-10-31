@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\NewsCategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\GenerationController;
 use App\Http\Controllers\Admin\ParticipantController;
@@ -16,7 +17,17 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    // News CRUD
+    // News Categories CRUD - must be before news resource
+    Route::prefix('news/categories')->name('news.categories.')->group(function () {
+        Route::get('/', [NewsCategoryController::class, 'index'])->name('index');
+        Route::get('/create', [NewsCategoryController::class, 'create'])->name('create');
+        Route::post('/', [NewsCategoryController::class, 'store'])->name('store');
+        Route::get('/{category}/edit', [NewsCategoryController::class, 'edit'])->name('edit');
+        Route::put('/{category}', [NewsCategoryController::class, 'update'])->name('update');
+        Route::delete('/{category}', [NewsCategoryController::class, 'destroy'])->name('destroy');
+        Route::patch('/{category}/toggle', [NewsCategoryController::class, 'toggle'])->name('toggle');
+    });
+
     // News tags must be registered before news resource to avoid conflict with
     // the `news/{news}` parameter route that would capture `/news/tags`.
     Route::prefix('news/tags')->name('news.tags.')->group(function () {
