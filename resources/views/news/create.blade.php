@@ -55,54 +55,14 @@
                         <input type="text" name="author" value="{{ old('author') }}" class="mt-1 w-full rounded-md border-slate-200 px-3 py-2">
                     </label>
 
-        {{-- Deskripsi pakai CKEditor --}}
-        <label class="block">
-            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Deskripsi</span>
-            <textarea id="deskripsi" name="deskripsi"
-                class="mt-1 w-full rounded-md border-slate-200 px-3 py-2">{{ old('deskripsi') }}</textarea>
-        </label>
-    {{-- CKEditor + Tailwind styling --}}
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
-    <style>
-        .ck-editor__editable_inline {
-            min-height: 250px;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            background-color: white;
-            color: #1e293b;
-        }
-        .ck-content ul {
-            list-style-type: disc;
-            margin-left: 1.5rem;
-        }
-        .ck-content ol {
-            list-style-type: decimal;
-            margin-left: 1.5rem;
-        }
-        .ck.ck-editor__main > .ck-editor__editable:not(.ck-focused) {
-            border-color: rgb(226 232 240); /* slate-200 */
-        }
-    </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            ClassicEditor.create(document.querySelector('#deskripsi'), {
-                toolbar: {
-                    items: [
-                        'heading', '|',
-                        'bold', 'italic', 'underline', 'link', '|',
-                        'bulletedList', 'numberedList', '|',
-                        'blockQuote', 'insertTable', 'undo', 'redo'
-                    ]
-                }
-            })
-            .then(editor => {
-                editor.model.document.on('change:data', () => {
-                    document.querySelector('#deskripsi').value = editor.getData();
-                });
-            })
-            .catch(console.error);
-        });
-    </script>
+                    <label class="block">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Deskripsi</span>
+                        <textarea
+                            id="deskripsi"
+                            name="deskripsi"
+                            class="mt-1 w-full rounded-md border-slate-200 px-3 py-2"
+                        >{{ old('deskripsi') }}</textarea>
+                    </label>
 
                     <label class="block">
                         <span class="text-sm text-slate-700 dark:text-slate-300">Photo (opsional)</span>
@@ -122,4 +82,31 @@
         </div>
     </div>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/suneditor@2.46.1/dist/css/suneditor.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/suneditor@2.46.1/dist/suneditor.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const textarea = document.getElementById('deskripsi');
+            const editor = SUNEDITOR.create(textarea, {
+                height: 320,
+                buttonList: [
+                    ['undo', 'redo'],
+                    ['font', 'fontSize', 'formatBlock'],
+                    ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript'],
+                    ['fontColor', 'hiliteColor'],
+                    ['align', 'list', 'table'],
+                    ['link', 'image', 'video'],
+                    ['blockquote', 'codeView', 'fullScreen']
+                ],
+                imageFileInput: false,
+                defaultStyle: 'font-size:14px;'
+            });
+
+            editor.onChange = function (contents) {
+                textarea.value = contents;
+            };
+
+            editor.setContents(textarea.value || '');
+        });
+    </script>
 </x-app-layout>
