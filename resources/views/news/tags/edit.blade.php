@@ -50,20 +50,6 @@
                     >
                 </div>
 
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between">
-                        <label for="slug" class="text-sm font-medium text-slate-700 dark:text-slate-200">Slug (opsional)</label>
-                        <span class="text-xs text-slate-400 dark:text-slate-500">Kosongkan untuk dibuat otomatis</span>
-                    </div>
-                    <input
-                        type="text"
-                        id="slug"
-                        name="slug"
-                        value="{{ old('slug', $tag->slug) }}"
-                        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 shadow-sm transition focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-indigo-500"
-                        placeholder="contoh: berita-terkini"
-                    >
-                </div>
             </div>
 
             <div class="flex items-center justify-between">

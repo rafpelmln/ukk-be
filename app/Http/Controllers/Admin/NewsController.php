@@ -7,7 +7,6 @@ use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 
 class NewsController extends Controller
 {
@@ -67,19 +66,13 @@ class NewsController extends Controller
         $data = $request->validate([
             'category_id' => 'nullable|exists:news_categories,id',
             'title' => 'required|string|max:255',
-            'slug' => ['nullable', 'string', 'max:255', Rule::unique('news', 'slug')],
             'subtitle' => 'nullable|string|max:255',
             'author' => 'nullable|string|max:255',
             'deskripsi' => 'nullable|string',
             'photo' => 'nullable|image|max:2048',
         ]);
 
-        // allow user to provide slug; otherwise generate from title
-        if (!empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['slug']);
-        } else {
-            $data['slug'] = Str::slug($request->input('title')) . '-' . Str::random(6);
-        }
+        $data['slug'] = $this->generateUniqueSlug($request->input('title'));
 
         if ($request->hasFile('photo')) {
             // store directly to public/foto/news per request
@@ -142,22 +135,17 @@ class NewsController extends Controller
         $data = $request->validate([
             'category_id' => 'nullable|exists:news_categories,id',
             'title' => 'required|string|max:255',
-            'slug' => ['nullable', 'string', 'max:255', Rule::unique('news', 'slug')->ignore($news->getKey())],
             'subtitle' => 'nullable|string|max:255',
             'author' => 'nullable|string|max:255',
             'deskripsi' => 'nullable|string',
             'photo' => 'nullable|image|max:2048',
         ]);
 
-        // if slug provided, normalize it; otherwise preserve existing slug
-        if (array_key_exists('slug', $data) && !empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['slug']);
-        } else {
-            // ensure we don't accidentally nullify slug
-            unset($data['slug']);
+        if ($news->title !== $data['title']) {
+            $data['slug'] = $this->generateUniqueSlug($data['title'], $news->id);
         }
 
-    if ($request->hasFile('photo')) {
+        if ($request->hasFile('photo')) {
             // delete old photo if exists (either public/foto or storage)
             if (!empty($news->photo)) {
                 $oldPublic = public_path($news->photo);
@@ -210,6 +198,29 @@ class NewsController extends Controller
         }
 
         return redirect()->route('news.index')->with('success', 'News updated.');
+    }
+
+    protected function generateUniqueSlug(string $title, ?string $ignoreId = null): string
+    {
+        $base = Str::slug($title);
+
+        if ($base === '') {
+            $base = Str::uuid();
+        }
+
+        $slug = $base;
+        $counter = 2;
+
+        while (
+            News::where('slug', $slug)
+                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $slug = $base . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 
     public function destroy(News $news)

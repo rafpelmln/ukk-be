@@ -7,7 +7,6 @@ use App\Models\Tag;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class TagController extends Controller
@@ -59,19 +58,16 @@ class TagController extends Controller
     {
         $input = $request->all();
 
-        if (!empty($input['slug'])) {
-            $input['slug'] = Str::slug($input['slug']);
-        }
-
         $validated = validator($input, [
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', Rule::unique('tags', 'slug')],
             'is_active' => ['nullable', 'boolean'],
         ])->validate();
 
         $validated['is_active'] = array_key_exists('is_active', $validated)
             ? (bool) $validated['is_active']
             : true;
+
+        $validated['slug'] = $this->generateUniqueSlug($validated['name']);
 
         Tag::create($validated);
 
@@ -89,23 +85,20 @@ class TagController extends Controller
     {
         $input = $request->all();
 
-        if (!empty($input['slug'])) {
-            $input['slug'] = Str::slug($input['slug']);
-        }
-
         $validated = validator($input, [
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', Rule::unique('tags', 'slug')->ignore($tag->getKey())],
             'is_active' => ['nullable', 'boolean'],
         ])->validate();
-
-        if (!array_key_exists('slug', $validated)) {
-            $validated['slug'] = $tag->slug;
-        }
 
         $validated['is_active'] = array_key_exists('is_active', $validated)
             ? (bool) $validated['is_active']
             : $tag->is_active;
+
+        if ($tag->name !== $validated['name']) {
+            $validated['slug'] = $this->generateUniqueSlug($validated['name'], $tag->id);
+        } else {
+            $validated['slug'] = $tag->slug;
+        }
 
         $tag->update($validated);
 
@@ -126,6 +119,29 @@ class TagController extends Controller
         ]);
 
         return $this->redirectWithStatus($request, 'Status tag diperbarui.');
+    }
+
+    protected function generateUniqueSlug(string $name, ?string $ignoreId = null): string
+    {
+        $base = Str::slug($name);
+
+        if ($base === '') {
+            $base = Str::uuid();
+        }
+
+        $slug = $base;
+        $counter = 2;
+
+        while (
+            Tag::where('slug', $slug)
+                ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $slug = $base . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 
     protected function redirectWithStatus(Request $request, string $message): RedirectResponse

@@ -45,16 +45,6 @@
                                 class="mt-1 w-full rounded-md border-slate-200 px-3 py-2" 
                                 required>
                         </label>
-                        <label class="block">
-                            <span class="text-sm text-slate-700 dark:text-slate-300">Slug (opsional)</span>
-                            <input 
-                                type="text" 
-                                name="slug" 
-                                id="slug"
-                                value="{{ old('slug', $news->slug) }}" 
-                                class="mt-1 w-full rounded-md border-slate-200 px-3 py-2" 
-                                placeholder="custom-slug-optional">
-                        </label>
                     </div>
 
                     <label class="block">
@@ -137,28 +127,4 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
     </div>
 
-    {{-- Script untuk auto generate slug --}}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const titleInput = document.getElementById('title');
-            const slugInput = document.getElementById('slug');
-
-            // Auto-update slug saat title diubah (selama user belum ubah slug manual)
-            titleInput.addEventListener('input', function() {
-                if (!slugInput.dataset.manual) {
-                    slugInput.value = this.value
-                        .toLowerCase()
-                        .trim()
-                        .replace(/[^\w\s-]/g, '')
-                        .replace(/\s+/g, '-')
-                        .replace(/-+/g, '-');
-                }
-            });
-
-            // Jika user ubah slug manual, hentikan auto-update
-            slugInput.addEventListener('input', function() {
-                this.dataset.manual = true;
-            });
-        });
-    </script>
 </x-app-layout>

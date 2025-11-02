@@ -44,16 +44,6 @@
                                 class="mt-1 w-full rounded-md border-slate-200 px-3 py-2" 
                                 required>
                         </label>
-                        <label class="block">
-                            <span class="text-sm text-slate-700 dark:text-slate-300">Slug (opsional)</span>
-                            <input 
-                                type="text" 
-                                name="slug" 
-                                id="slug" 
-                                value="{{ old('slug') }}" 
-                                class="mt-1 w-full rounded-md border-slate-200 px-3 py-2" 
-                                placeholder="custom-slug-optional">
-                        </label>
                     </div>
                     <label class="block">
                         <span class="text-sm text-slate-700 dark:text-slate-300">Subtitle</span>
@@ -132,28 +122,4 @@
         </div>
     </div>
 
-    {{-- Script untuk auto generate slug --}}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const titleInput = document.getElementById('title');
-            const slugInput = document.getElementById('slug');
-
-            titleInput.addEventListener('input', function() {
-                // Jika user belum pernah ubah slug manual, isi otomatis
-                if (!slugInput.dataset.manual) {
-                    slugInput.value = this.value
-                        .toLowerCase()
-                        .trim()
-                        .replace(/[^\w\s-]/g, '')   // hapus karakter aneh
-                        .replace(/\s+/g, '-')        // ubah spasi jadi tanda "-"
-                        .replace(/-+/g, '-');        // hapus tanda "-" ganda
-                }
-            });
-
-            // Jika user ubah slug secara manual, hentikan auto-update
-            slugInput.addEventListener('input', function() {
-                this.dataset.manual = true;
-            });
-        });
-    </script>
 </x-app-layout>
