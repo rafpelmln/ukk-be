@@ -15,7 +15,7 @@ class NewsCategoryController extends Controller
     public function index()
     {
         $categories = NewsCategory::orderBy('name')->paginate(10);
-        return view('admin.news-categories.index', compact('categories'));
+        return view('news.categories.index', compact('categories'));
     }
 
     /**
@@ -23,7 +23,7 @@ class NewsCategoryController extends Controller
      */
     public function create()
     {
-        return view('admin.news-categories.create');
+        return view('news.categories.create');
     }
 
     /**
@@ -63,7 +63,7 @@ class NewsCategoryController extends Controller
      */
     public function edit(NewsCategory $category)
     {
-        return view('admin.news-categories.edit', compact('category'));
+        return view('news.categories.edit', compact('category'));
     }
 
     /**

@@ -18,7 +18,23 @@
                 @csrf
                 @method('PUT')
                 <div class="grid gap-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label class="block">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Kategori</span>
+                        <select
+                            name="category_id"
+                            class="mt-1 w-full rounded-md border-slate-200 px-3 py-2"
+                        >
+                            <option value="">Pilih kategori</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id', $news->category_id) == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Kategori opsional, dapat dikosongkan bila belum tersedia.</p>
+                    </label>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <label class="block">
                             <span class="text-sm text-slate-700 dark:text-slate-300">Title</span>
                             <input 
@@ -40,19 +56,6 @@
                                 placeholder="custom-slug-optional">
                         </label>
                     </div>
-
-                    <label class="block">
-                        <span class="text-sm text-slate-700 dark:text-slate-300">Tags</span>
-                        <div class="mt-1">
-                            <div class="tag-picker" data-available-tags='{{ json_encode($allTags->map(fn($t)=>['id'=>$t->id,'name'=>$t->name])->all()) }}' data-old-tags='{{ json_encode(old('tags', $selectedTags ?? [])) }}'>
-                                <div class="flex flex-wrap gap-2 mb-2 tag-list"></div>
-                                <input type="text" class="w-full rounded-md border-slate-200 px-3 py-2 tag-input" placeholder="Tambah tag (ketik lalu Enter)">
-                                <div class="mt-2 text-sm text-slate-500">Tekan Enter untuk menambah tag baru atau pilih dari saran.</div>
-                                <div class="tag-suggestions mt-1 z-50"></div>
-                                <div class="tag-hidden-inputs"></div>
-                            </div>
-                        </div>
-                    </label>
 
                     <label class="block">
                         <span class="text-sm text-slate-700 dark:text-slate-300">Subtitle</span>
@@ -157,110 +160,5 @@ document.addEventListener("DOMContentLoaded", function () {
                 this.dataset.manual = true;
             });
         });
-    </script>
-    {{-- Tag picker script --}}
-    <script>
-        (function(){
-            function createChip(name, id){
-                const chip = document.createElement('span');
-                chip.className = 'inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700';
-                chip.textContent = name;
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'ml-2 text-slate-400 hover:text-rose-600';
-                btn.innerHTML = '&times;';
-                chip.appendChild(btn);
-                return {chip, btn};
-            }
-
-            function initPicker(pickerEl){
-                const available = JSON.parse(pickerEl.dataset.availableTags || '[]');
-                const oldTags = JSON.parse(pickerEl.dataset.oldTags || '[]');
-                const listEl = pickerEl.querySelector('.tag-list');
-                const inputEl = pickerEl.querySelector('.tag-input');
-                const suggestionsEl = pickerEl.querySelector('.tag-suggestions');
-                const hiddenEl = pickerEl.querySelector('.tag-hidden-inputs');
-
-                const selected = [];
-
-                function addTagObj(obj){
-                    if (obj.id) {
-                        if (selected.some(s=>s.id && s.id == obj.id)) return;
-                    } else {
-                        if (selected.some(s=>s.name && s.name.toLowerCase() === obj.name.toLowerCase())) return;
-                    }
-
-                    const {chip, btn} = createChip(obj.name, obj.id);
-                    listEl.appendChild(chip);
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'tags[]';
-                    input.value = obj.id ? obj.id : obj.name;
-                    hiddenEl.appendChild(input);
-                    selected.push(obj);
-                    btn.addEventListener('click', function(){
-                        const idx = selected.indexOf(obj);
-                        if (idx !== -1) selected.splice(idx,1);
-                        hiddenEl.removeChild(input);
-                        listEl.removeChild(chip);
-                    });
-                }
-
-                function showSuggestions(q){
-                    const ql = q.trim().toLowerCase();
-                    suggestionsEl.innerHTML = '';
-                    if (ql === '') return;
-                    const matches = available.filter(t => t.name.toLowerCase().includes(ql) && !selected.some(s=>s.id && s.id==t.id));
-                    if (matches.length === 0) return;
-                    const ul = document.createElement('ul');
-                    ul.className = 'bg-white border rounded shadow p-2 max-h-40 overflow-auto';
-                    matches.forEach(m => {
-                        const li = document.createElement('li');
-                        li.className = 'p-1 hover:bg-slate-100 cursor-pointer';
-                        li.textContent = m.name;
-                        li.addEventListener('click', function(){
-                            addTagObj(m);
-                            inputEl.value = '';
-                            suggestionsEl.innerHTML = '';
-                        });
-                        ul.appendChild(li);
-                    });
-                    suggestionsEl.appendChild(ul);
-                }
-
-                oldTags.forEach(t => {
-                    const found = available.find(a=>String(a.id) === String(t));
-                    if (found) addTagObj(found);
-                    else if (typeof t === 'string' && t.trim() !== '') addTagObj({name: t});
-                });
-
-                inputEl.addEventListener('input', function(e){
-                    showSuggestions(this.value);
-                });
-
-                inputEl.addEventListener('keydown', function(e){
-                    if (e.key === 'Enter' || e.key === ','){
-                        e.preventDefault();
-                        const val = this.value.trim().replace(/,+$/,'');
-                        if (!val) return;
-                        const match = available.find(a => a.name.toLowerCase() === val.toLowerCase());
-                        if (match) addTagObj(match);
-                        else addTagObj({name: val});
-                        this.value = '';
-                        suggestionsEl.innerHTML = '';
-                    }
-                });
-
-                document.addEventListener('click', function(ev){
-                    if (!pickerEl.contains(ev.target)){
-                        suggestionsEl.innerHTML = '';
-                    }
-                });
-            }
-
-            document.addEventListener('DOMContentLoaded', function(){
-                document.querySelectorAll('.tag-picker').forEach(initPicker);
-            });
-        })();
     </script>
 </x-app-layout>

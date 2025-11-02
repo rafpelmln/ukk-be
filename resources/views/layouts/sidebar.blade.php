@@ -4,10 +4,31 @@
         [
             'icon' => 'newspaper',
             'label' => 'News',
-            'active' => ['news.tags.*', 'news.*'],
+            'active' => [
+                'news.categories.*',
+                'news.tags.*',
+                'news.index',
+                'news.create',
+                'news.edit',
+                'news.show',
+                'news.store',
+                'news.update',
+            ],
             'children' => [
+                ['label' => 'Kategori', 'route' => route('news.categories.index'), 'active' => ['news.categories.*']],
                 ['label' => 'Tag', 'route' => route('news.tags.index'), 'active' => ['news.tags.*']],
-                ['label' => 'News', 'route' => route('news.index'), 'active' => ['news.*']],
+                [
+                    'label' => 'News',
+                    'route' => route('news.index'),
+                    'active' => [
+                        'news.index',
+                        'news.create',
+                        'news.edit',
+                        'news.show',
+                        'news.store',
+                        'news.update',
+                    ],
+                ],
             ],
         ],
         [

@@ -13,7 +13,10 @@ class NewsController extends Controller
     public function index()
     {
         // Eager-load tags and return computed attributes (photo_url) for API clients
-        $news = News::with('tags')->orderBy('created_at', 'desc')->get();
+        $news = News::with([
+            'category:id,name,slug,color',
+            'tags:id,name,slug',
+        ])->orderBy('created_at', 'desc')->get();
 
         return response()->json([
             'data' => $news,
@@ -34,7 +37,10 @@ class NewsController extends Controller
     public function show(string $id)
     {
         // Try to find by id (uuid) or slug
-        $newsItem = News::with('tags')
+        $newsItem = News::with([
+                'category:id,name,slug,color',
+                'tags:id,name,slug',
+            ])
             ->where('id', $id)
             ->orWhere('slug', $id)
             ->first();

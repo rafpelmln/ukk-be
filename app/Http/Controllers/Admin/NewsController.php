@@ -58,9 +58,8 @@ class NewsController extends Controller
 
     public function create()
     {
-        $allTags = \App\Models\Tag::where('is_active', true)->orderBy('name')->get();
         $categories = \App\Models\NewsCategory::where('is_active', true)->orderBy('name')->get();
-        return view('news.create', compact('allTags', 'categories'));
+        return view('news.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -97,24 +96,31 @@ class NewsController extends Controller
 
         $news = News::create($data);
 
-        // handle tags: accept array of ids or names
-        $tagsInput = $request->input('tags', []);
-        $tagIds = [];
-        foreach ($tagsInput as $t) {
-            if (is_numeric($t) && $tag = \App\Models\Tag::find($t)) {
+        // handle tags only when provided
+        $tagsInput = $request->input('tags');
+        if (is_array($tagsInput)) {
+            $tagIds = [];
+            foreach ($tagsInput as $t) {
+                if (is_numeric($t) && $tag = \App\Models\Tag::find($t)) {
+                    $tagIds[] = $tag->id;
+                    continue;
+                }
+
+                $name = trim((string) $t);
+                if ($name === '') {
+                    continue;
+                }
+
+                $tag = \App\Models\Tag::firstOrCreate(
+                    ['name' => $name],
+                    ['slug' => \Illuminate\Support\Str::slug($name)]
+                );
                 $tagIds[] = $tag->id;
-                continue;
             }
 
-            // treat as name, find or create
-            $name = trim((string) $t);
-            if ($name === '') continue;
-            $tag = \App\Models\Tag::firstOrCreate(['name' => $name], ['slug' => \Illuminate\Support\Str::slug($name)]);
-            $tagIds[] = $tag->id;
-        }
-
-        if (!empty($tagIds)) {
-            $news->tags()->sync($tagIds);
+            if (!empty($tagIds)) {
+                $news->tags()->sync($tagIds);
+            }
         }
 
         return redirect()->route('news.index')->with('success', 'News created.');
@@ -127,10 +133,8 @@ class NewsController extends Controller
 
     public function edit(News $news)
     {
-        $allTags = \App\Models\Tag::where('is_active', true)->orderBy('name')->get();
         $categories = \App\Models\NewsCategory::where('is_active', true)->orderBy('name')->get();
-        $selectedTags = $news->tags()->pluck('tags.id')->toArray();
-        return view('news.edit', compact('news', 'allTags', 'categories', 'selectedTags'));
+        return view('news.edit', compact('news', 'categories'));
     }
 
     public function update(Request $request, News $news)
@@ -181,21 +185,29 @@ class NewsController extends Controller
         $news->update($data);
 
         // handle tags
-        $tagsInput = $request->input('tags', []);
-        $tagIds = [];
-        foreach ($tagsInput as $t) {
-            if (is_numeric($t) && $tag = \App\Models\Tag::find($t)) {
+        $tagsInput = $request->input('tags');
+        if (is_array($tagsInput)) {
+            $tagIds = [];
+            foreach ($tagsInput as $t) {
+                if (is_numeric($t) && $tag = \App\Models\Tag::find($t)) {
+                    $tagIds[] = $tag->id;
+                    continue;
+                }
+
+                $name = trim((string) $t);
+                if ($name === '') {
+                    continue;
+                }
+
+                $tag = \App\Models\Tag::firstOrCreate(
+                    ['name' => $name],
+                    ['slug' => \Illuminate\Support\Str::slug($name)]
+                );
                 $tagIds[] = $tag->id;
-                continue;
             }
 
-            $name = trim((string) $t);
-            if ($name === '') continue;
-            $tag = \App\Models\Tag::firstOrCreate(['name' => $name], ['slug' => \Illuminate\Support\Str::slug($name)]);
-            $tagIds[] = $tag->id;
+            $news->tags()->sync($tagIds);
         }
-
-        $news->tags()->sync($tagIds);
 
         return redirect()->route('news.index')->with('success', 'News updated.');
     }
