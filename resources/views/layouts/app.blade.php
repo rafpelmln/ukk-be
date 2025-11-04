@@ -108,6 +108,81 @@
                     if (confirm(title + '\n\nTindakan ini tidak dapat dikembalikan.')) doSubmit();
                 }
             }
+
+            const rejectBtn = e.target.closest('[data-confirm-reject]');
+            if (rejectBtn) {
+                e.preventDefault();
+                const requestId = rejectBtn.dataset.confirmReject;
+                const name = rejectBtn.dataset.participantName || '';
+                const title = name ? `Tolak pengajuan ${name}?` : 'Tolak pengajuan ini?';
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: title,
+                        text: 'Berikan alasan penolakan (opsional)',
+                        input: 'textarea',
+                        inputPlaceholder: 'Jelaskan alasan penolakan...',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Tolak Pengajuan',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#DC2626',
+                        inputValidator: () => {
+                            // Allow empty notes
+                            return null;
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = `/position-requests/${requestId}/reject`;
+
+                            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                            const csrfInput = document.createElement('input');
+                            csrfInput.type = 'hidden';
+                            csrfInput.name = '_token';
+                            csrfInput.value = csrfToken;
+                            form.appendChild(csrfInput);
+
+                            if (result.value) {
+                                const notesInput = document.createElement('input');
+                                notesInput.type = 'hidden';
+                                notesInput.name = 'notes';
+                                notesInput.value = result.value;
+                                form.appendChild(notesInput);
+                            }
+
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                } else {
+                    const notes = prompt(title + '\n\nBerikan alasan penolakan (opsional):');
+                    if (notes !== null) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/position-requests/${requestId}/reject`;
+
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = '_token';
+                        csrfInput.value = csrfToken;
+                        form.appendChild(csrfInput);
+
+                        if (notes) {
+                            const notesInput = document.createElement('input');
+                            notesInput.type = 'hidden';
+                            notesInput.name = 'notes';
+                            notesInput.value = notes;
+                            form.appendChild(notesInput);
+                        }
+
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                }
+            }
         });
     </script>
 </body>

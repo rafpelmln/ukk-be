@@ -62,6 +62,7 @@ class Participant extends Model
     public function positions(): BelongsToMany
     {
         return $this->belongsToMany(Position::class, 'participant_position')
+            ->using(ParticipantPosition::class)
             ->withPivot('id')
             ->withTimestamps();
     }

@@ -100,7 +100,7 @@
                                                         Setujui
                                                     </button>
                                                 </form>
-                                                <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50" onclick="showRejectModal({{ $request->id }})">
+                                                <button type="button" data-confirm-reject="{{ $request->id }}" data-participant-name="{{ optional($request->participant)->name ?? '' }}" class="inline-flex items-center gap-2 rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50">
                                                     <i class="fa-solid fa-times text-xs"></i>
                                                     Tolak
                                                 </button>

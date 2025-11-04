@@ -38,6 +38,7 @@ class Position extends Model
     public function participants(): BelongsToMany
     {
         return $this->belongsToMany(Participant::class, 'participant_position')
+            ->using(ParticipantPosition::class)
             ->withTimestamps();
     }
 
