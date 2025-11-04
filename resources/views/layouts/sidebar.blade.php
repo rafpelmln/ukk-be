@@ -34,10 +34,18 @@
         [
             'icon' => 'users',
             'label' => 'Participants',
-            'active' => ['generations.*', 'participants.*', 'positions.*'],
+            'active' => ['participants.*', 'position-requests.*'],
+            'children' => [
+                ['label' => 'Peserta', 'route' => route('participants.index'), 'active' => ['participants.*']],
+                ['label' => 'Pengajuan', 'route' => route('position-requests.index'), 'active' => ['position-requests.*']],
+            ],
+        ],
+        [
+            'icon' => 'cog',
+            'label' => 'Settings',
+            'active' => ['generations.*', 'positions.*'],
             'children' => [
                 ['label' => 'Generasi', 'route' => route('generations.index'), 'active' => ['generations.*']],
-                ['label' => 'Peserta', 'route' => route('participants.index'), 'active' => ['participants.*']],
                 ['label' => 'Posisi', 'route' => route('positions.index'), 'active' => ['positions.*']],
             ],
         ],

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\GenerationController;
 use App\Http\Controllers\Admin\ParticipantController;
 use App\Http\Controllers\Admin\PositionController;
+use App\Http\Controllers\Admin\PositionRequestController;
 
 
 Route::get('/', function () {
@@ -47,6 +48,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('participants', ParticipantController::class)->except(['show']);
     Route::resource('positions', PositionController::class)->except(['show']);
     Route::patch('positions/{position}/toggle', [PositionController::class, 'toggle'])->name('positions.toggle');
+
+    // Position Requests - for managing participant position applications
+    Route::prefix('position-requests')->name('position-requests.')->group(function () {
+        Route::get('/', [PositionRequestController::class, 'index'])->name('index');
+        Route::get('/{positionRequest}', [PositionRequestController::class, 'show'])->name('show');
+        Route::post('/{positionRequest}/approve', [PositionRequestController::class, 'approve'])->name('approve');
+        Route::post('/{positionRequest}/reject', [PositionRequestController::class, 'reject'])->name('reject');
+        Route::delete('/{positionRequest}', [PositionRequestController::class, 'destroy'])->name('destroy');
+    });
 });
 
 
