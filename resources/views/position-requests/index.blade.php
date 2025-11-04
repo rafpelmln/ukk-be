@@ -105,10 +105,10 @@
                     @foreach($positionRequests as $request)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 text-sm">
-                                <div class="font-medium text-gray-900">{{ $request->participant->name }}</div>
-                                <div class="text-gray-500">{{ $request->participant->email }}</div>
+                                <div class="font-medium text-gray-900">{{ optional($request->participant)->name ?? '-' }}</div>
+                                <div class="text-gray-500">{{ optional($request->participant)->email ?? '-' }}</div>
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-900">{{ $request->position->name }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-900">{{ optional($request->position)->name ?? '-' }}</td>
                             <td class="px-6 py-4 text-sm">
                                 @if($request->status === 'pending')
                                     <span class="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
