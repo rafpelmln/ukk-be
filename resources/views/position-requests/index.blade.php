@@ -87,16 +87,23 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">{{ optional($request->created_at)->format('d M Y H:i') }}</td>
                                     <td class="px-6 py-4">
-                                        <div class="flex items-center justify-center gap-3 text-base">
-                                            <a href="{{ route('position-requests.show', $request) }}" class="text-slate-500 transition hover:text-indigo-600" title="Detail"><i class="fa-solid fa-eye"></i></a>
+                                        <div class="flex items-center justify-start gap-2">
+                                            <a href="{{ route('position-requests.show', $request) }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-400 hover:text-indigo-600" title="Detail">
+                                                <i class="fa-solid fa-eye text-xs"></i>
+                                                Detail
+                                            </a>
                                             @if($request->status === 'pending')
-                                                <form method="POST" action="{{ route('position-requests.approve', $request) }}" class="inline">
+                                                <form id="approve-form-{{ $request->id }}" method="POST" action="{{ route('position-requests.approve', $request) }}" class="inline">
                                                     @csrf
-                                                    <button type="submit" class="text-slate-500 transition hover:text-green-600" onclick="return confirm('Setujui pengajuan ini?')">
-                                                        <i class="fa-solid fa-check"></i>
+                                                    <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-400 hover:text-emerald-600" onclick="confirmApprove('approve-form-{{ $request->id }}', @json(optional($request->participant)->name ?? ''))">
+                                                        <i class="fa-solid fa-check text-xs"></i>
+                                                        Setujui
                                                     </button>
                                                 </form>
-                                                <button type="button" class="text-slate-500 transition hover:text-rose-600" onclick="showRejectModal({{ $request->id }})"><i class="fa-solid fa-times"></i></button>
+                                                <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50" onclick="showRejectModal({{ $request->id }})">
+                                                    <i class="fa-solid fa-times text-xs"></i>
+                                                    Tolak
+                                                </button>
                                             @endif
                                         </div>
                                     </td>
@@ -201,6 +208,26 @@
         document.getElementById('rejectModal').style.display = 'none';
         document.getElementById('notes').value = '';
         currentRequestId = null;
+    }
+
+    function confirmApprove(formId, participantName) {
+        const title = participantName ? `Setujui pengajuan ${participantName}?` : 'Setujui pengajuan ini?';
+        Swal.fire({
+            title: title,
+            text: 'Tindakan ini akan menyetujui pengajuan peserta.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Setujui',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#10B981',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const form = document.getElementById(formId);
+                if (form) {
+                    form.submit();
+                }
+            }
+        });
     }
 </script>
 </x-app-layout>

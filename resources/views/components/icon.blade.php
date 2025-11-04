@@ -7,9 +7,11 @@
         'newspaper' => 'fa-regular fa-newspaper',
         'plus' => 'fa-solid fa-plus',
         'tag' => 'fa-solid fa-tag',
+        'cog' => 'fa-solid fa-cog',
+        'gear' => 'fa-solid fa-gear',
     ];
 
-    $iconClass = $icons[$name] ?? 'fa-solid fa-circle';
+    $iconClass = $icons[(string) ($name ?? '')] ?? 'fa-solid fa-circle';
 @endphp
 
 <span class="inline-flex items-center justify-center {{ $class }}" {{ $attributes }}>
