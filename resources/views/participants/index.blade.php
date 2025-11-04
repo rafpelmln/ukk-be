@@ -86,10 +86,10 @@
                                         <i class="fa-solid fa-pen text-xs"></i>
                                         Edit
                                     </a>
-                                    <form action="{{ route('participants.destroy', $participant) }}" method="POST" onsubmit="return confirm('Hapus peserta ini?')" class="inline">
+                                    <form id="delete-form-{{ $participant->id }}" action="{{ route('participants.destroy', $participant) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 dark:border-rose-900/40 dark:text-rose-300 dark:hover:bg-rose-900/20">
+                                        <button type="button" data-confirm-delete="delete-form-{{ $participant->id }}" data-participant-name="{{ $participant->name }}" class="inline-flex items-center gap-2 rounded-lg border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-600 transition hover:bg-rose-50 dark:border-rose-900/40 dark:text-rose-300 dark:hover:bg-rose-900/20">
                                             <i class="fa-solid fa-trash text-xs"></i>
                                             Hapus
                                         </button>

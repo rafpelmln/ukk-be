@@ -95,7 +95,7 @@
                                             @if($request->status === 'pending')
                                                 <form id="approve-form-{{ $request->id }}" method="POST" action="{{ route('position-requests.approve', $request) }}" class="inline">
                                                     @csrf
-                                                    <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-400 hover:text-emerald-600" onclick="confirmApprove('approve-form-{{ $request->id }}', @json(optional($request->participant)->name ?? ''))">
+                                                    <button type="button" data-confirm-approve="approve-form-{{ $request->id }}" data-participant-name="{{ optional($request->participant)->name ?? '' }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-indigo-400 hover:text-emerald-600">
                                                         <i class="fa-solid fa-check text-xs"></i>
                                                         Setujui
                                                     </button>
@@ -208,35 +208,6 @@
         document.getElementById('rejectModal').style.display = 'none';
         document.getElementById('notes').value = '';
         currentRequestId = null;
-    }
-
-    function confirmApprove(formId, participantName) {
-        const title = participantName ? `Setujui pengajuan ${participantName}?` : 'Setujui pengajuan ini?';
-        if (typeof Swal === 'undefined') {
-            // Fallback to native confirm if SweetAlert2 not loaded for any reason
-            if (confirm(title + '\n\nTindakan ini akan menyetujui pengajuan peserta.')) {
-                const form = document.getElementById(formId);
-                if (form) form.submit();
-            }
-            return;
-        }
-
-        Swal.fire({
-            title: title,
-            text: 'Tindakan ini akan menyetujui pengajuan peserta.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Setujui',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#10B981',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const form = document.getElementById(formId);
-                if (form) {
-                    form.submit();
-                }
-            }
-        });
     }
 </script>
 </x-app-layout>
