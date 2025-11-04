@@ -212,6 +212,15 @@
 
     function confirmApprove(formId, participantName) {
         const title = participantName ? `Setujui pengajuan ${participantName}?` : 'Setujui pengajuan ini?';
+        if (typeof Swal === 'undefined') {
+            // Fallback to native confirm if SweetAlert2 not loaded for any reason
+            if (confirm(title + '\n\nTindakan ini akan menyetujui pengajuan peserta.')) {
+                const form = document.getElementById(formId);
+                if (form) form.submit();
+            }
+            return;
+        }
+
         Swal.fire({
             title: title,
             text: 'Tindakan ini akan menyetujui pengajuan peserta.',
