@@ -9,8 +9,12 @@ class PositionRequest extends Model
 {
     protected $table = 'participants_position_request';
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
-        'participant_id',
+        'id',
+        'participants_id',
         'position_id',
         'status',
         'notes',
@@ -27,7 +31,7 @@ class PositionRequest extends Model
      */
     public function participant(): BelongsTo
     {
-        return $this->belongsTo(Participant::class);
+        return $this->belongsTo(Participant::class, 'participants_id');
     }
 
     /**
@@ -35,6 +39,6 @@ class PositionRequest extends Model
      */
     public function position(): BelongsTo
     {
-        return $this->belongsTo(Position::class);
+        return $this->belongsTo(Position::class, 'position_id');
     }
 }
