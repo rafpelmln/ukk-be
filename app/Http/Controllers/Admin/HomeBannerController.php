@@ -13,17 +13,8 @@ class HomeBannerController extends Controller
 {
     public function index(Request $request)
     {
-        $search = trim((string) $request->query('query', ''));
-        $sort = $request->query('sort', 'display_order');
-        $direction = $request->query('direction', 'asc');
         $perPage = (int) $request->query('per_page', 10);
-
-        $allowedSorts = ['display_order', 'title', 'created_at', 'is_active'];
-        if (!in_array($sort, $allowedSorts, true)) {
-            $sort = 'display_order';
-        }
-
-        $direction = $direction === 'desc' ? 'desc' : 'asc';
+        $direction = $request->query('direction', 'asc') === 'desc' ? 'desc' : 'asc';
 
         $allowedPerPage = [5, 10, 25, 50, 100];
         if (!in_array($perPage, $allowedPerPage, true)) {
@@ -31,23 +22,13 @@ class HomeBannerController extends Controller
         }
 
         $banners = HomeBanner::query()
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($sub) use ($search) {
-                    $sub->where('title', 'like', "%{$search}%")
-                        ->orWhere('subtitle', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                });
-            })
-            ->orderBy($sort, $direction)
-            ->orderBy('display_order')
+            ->orderBy('display_order', $direction)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)
             ->withQueryString();
 
         return view('home-banners.index', [
             'banners' => $banners,
-            'search' => $search,
-            'sort' => $sort,
             'direction' => $direction,
             'perPage' => $perPage,
         ]);
@@ -63,10 +44,21 @@ class HomeBannerController extends Controller
         $data = $this->validatedData($request, true);
 
         if ($request->hasFile('image')) {
-            $data['image_path'] = $this->storeCompressedImage($request->file('image'));
+            $imagePath = $this->storeCompressedImage($request->file('image'));
+        } else {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['image' => 'Gambar banner wajib diunggah.']);
         }
 
-        HomeBanner::create($data);
+        $nextOrder = ((int) HomeBanner::max('display_order')) + 1;
+
+        HomeBanner::create([
+            'image_path' => $imagePath,
+            'is_active' => true,
+            'display_order' => $nextOrder,
+        ]);
 
         return redirect()
             ->route('home-banners.index')
@@ -120,23 +112,12 @@ class HomeBannerController extends Controller
     private function validatedData(Request $request, bool $isCreate): array
     {
         $rules = [
-            'title' => 'required|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'button_label' => 'nullable|string|max:100',
-            'button_url' => 'nullable|url|max:2048',
-            'display_order' => 'nullable|integer|min:0|max:65535',
-            'is_active' => 'nullable|boolean',
+            'image' => ($isCreate ? 'required' : 'nullable') . '|image|max:2048',
         ];
-
-        $rules['image'] = ($isCreate ? 'required' : 'nullable') . '|image|max:2048';
 
         $validated = $request->validate($rules, [
             'image.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
-
-        $validated['display_order'] = $validated['display_order'] ?? 0;
-        $validated['is_active'] = isset($validated['is_active']) ? (bool) $validated['is_active'] : true;
 
         return $validated;
     }

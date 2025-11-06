@@ -10,11 +10,6 @@ class HomeBanner extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'subtitle',
-        'description',
-        'button_label',
-        'button_url',
         'image_path',
         'is_active',
         'display_order',

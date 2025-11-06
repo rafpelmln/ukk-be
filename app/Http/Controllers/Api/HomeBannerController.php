@@ -18,12 +18,8 @@ class HomeBannerController extends Controller
             ->map(function (HomeBanner $banner) {
                 return [
                     'id' => $banner->id,
-                    'title' => $banner->title,
-                    'subtitle' => $banner->subtitle,
-                    'description' => $banner->description,
-                    'button_label' => $banner->button_label,
-                    'button_url' => $banner->button_url,
                     'image_url' => $banner->image_path ? asset($banner->image_path) : null,
+                    'is_active' => (bool) $banner->is_active,
                     'display_order' => $banner->display_order,
                     'created_at' => $banner->created_at,
                     'updated_at' => $banner->updated_at,
