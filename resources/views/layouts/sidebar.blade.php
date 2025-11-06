@@ -45,6 +45,20 @@
             ],
         ],
         [
+            'icon' => 'image',
+            'label' => 'Home Banner',
+            'route' => route('home-banners.index'),
+            'active' => [
+                'home-banners.index',
+                'home-banners.create',
+                'home-banners.store',
+                'home-banners.edit',
+                'home-banners.update',
+                'home-banners.destroy',
+                'home-banners.toggle',
+            ],
+        ],
+        [
             'icon' => 'users',
             'label' => 'Participants',
             'active' => ['participants.*', 'position-requests.*'],

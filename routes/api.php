@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthParticipantsController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\HomeBannerController as ApiHomeBannerController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -31,3 +32,6 @@ Route::get('/news/{id}', [NewsController::class, 'show']);
 // Events
 Route::get('/events', [EventController::class, 'index']);
 Route::get('/events/{id}', [EventController::class, 'show']);
+
+// Home banners
+Route::get('/home-banners', [ApiHomeBannerController::class, 'index']);

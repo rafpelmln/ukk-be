@@ -10,6 +10,7 @@
         'cog' => 'fa-solid fa-cog',
         'gear' => 'fa-solid fa-gear',
         'calendar-days' => 'fa-solid fa-calendar-days',
+        'image' => 'fa-regular fa-image',
     ];
 
     $iconClass = $icons[(string) ($name ?? '')] ?? 'fa-solid fa-circle';

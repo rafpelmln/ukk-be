@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ParticipantController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\PositionRequestController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\HomeBannerController as AdminHomeBannerController;
 
 
 Route::get('/', function () {
@@ -47,6 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Events management
     Route::resource('events', EventController::class)->except(['show']);
+    Route::resource('home-banners', AdminHomeBannerController::class)->except(['show']);
+    Route::patch('home-banners/{homeBanner}/toggle', [AdminHomeBannerController::class, 'toggle'])->name('home-banners.toggle');
 
     Route::resource('generations', GenerationController::class)->except(['show']);
     Route::resource('participants', ParticipantController::class)->except(['show']);
