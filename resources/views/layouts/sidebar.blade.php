@@ -59,6 +59,31 @@
             ],
         ],
         [
+            'icon' => 'credit-card',
+            'label' => 'Rekening Bank',
+            'route' => route('bank-accounts.index'),
+            'active' => [
+                'bank-accounts.index',
+                'bank-accounts.create',
+                'bank-accounts.store',
+                'bank-accounts.edit',
+                'bank-accounts.update',
+                'bank-accounts.destroy',
+            ],
+        ],
+        [
+            'icon' => 'shopping-cart',
+            'label' => 'Order Events',
+            'route' => route('event-orders.index'),
+            'active' => [
+                'event-orders.index',
+                'event-orders.show',
+                'event-orders.approve',
+                'event-orders.reject',
+                'event-orders.destroy',
+            ],
+        ],
+        [
             'icon' => 'users',
             'label' => 'Participants',
             'active' => ['participants.*', 'position-requests.*'],

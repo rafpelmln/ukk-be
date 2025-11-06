@@ -25,7 +25,7 @@ Route::get('/test', function () {
     return response()->json(['message' => 'API is working', 'timestamp' => now()]);
 });
 
-// News 
+// News
 Route::get('/news', [NewsController::class, 'index']);
 Route::get('/news/{id}', [NewsController::class, 'show']);
 
@@ -35,3 +35,13 @@ Route::get('/events/{id}', [EventController::class, 'show']);
 
 // Home banners
 Route::get('/home-banners', [ApiHomeBannerController::class, 'index']);
+
+// Bank accounts
+use App\Http\Controllers\Api\BankAccountController;
+Route::get('/bank-accounts', [BankAccountController::class, 'index']);
+
+// Event orders
+use App\Http\Controllers\Api\EventOrderController;
+Route::post('/event-orders', [EventOrderController::class, 'store']);
+Route::get('/event-orders/{id}', [EventOrderController::class, 'show']);
+Route::post('/event-orders/{id}/upload-payment-proof', [EventOrderController::class, 'uploadPaymentProof']);

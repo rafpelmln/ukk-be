@@ -3,20 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Event;
+use App\Models\BankAccount;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class EventController extends Controller
+class BankAccountController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
     }
 
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
         $search = trim((string) $request->query('query', ''));
@@ -24,7 +26,7 @@ class EventController extends Controller
         $direction = $request->query('direction', 'desc');
         $perPage = (int) $request->query('per_page', 10);
 
-        $allowedSorts = ['created_at', 'title', 'event_date'];
+        $allowedSorts = ['created_at', 'nama_bank', 'nama', 'no_rek'];
         if (!in_array($sort, $allowedSorts, true)) {
             $sort = 'created_at';
         }
@@ -36,12 +38,12 @@ class EventController extends Controller
             $perPage = 10;
         }
 
-        $events = Event::query()
+        $bankAccounts = BankAccount::query()
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($sub) use ($search) {
-                    $sub->where('title', 'like', "%{$search}%")
-                        ->orWhere('subtitle', 'like', "%{$search}%")
-                        ->orWhere('location', 'like', "%{$search}%");
+                    $sub->where('nama_bank', 'like', "%{$search}%")
+                        ->orWhere('nama', 'like', "%{$search}%")
+                        ->orWhere('no_rek', 'like', "%{$search}%");
                 });
             })
             ->orderBy($sort, $direction)
@@ -49,8 +51,8 @@ class EventController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        return view('events.index', [
-            'events' => $events,
+        return view('bank-accounts.index', [
+            'bankAccounts' => $bankAccounts,
             'search' => $search,
             'sort' => $sort,
             'direction' => $direction,
@@ -58,11 +60,17 @@ class EventController extends Controller
         ]);
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        return view('events.create');
+        return view('bank-accounts.create');
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
         $data = $this->validatedData($request);
@@ -71,77 +79,67 @@ class EventController extends Controller
             $data['photo'] = $this->storeCompressedPhoto($request->file('photo'));
         }
 
-        Event::create($data);
+        BankAccount::create($data);
 
-        return redirect()->route('events.index')->with('success', 'Event berhasil dibuat.');
+        return redirect()->route('bank-accounts.index')->with('success', 'Rekening bank berhasil dibuat.');
     }
 
-    public function edit(Event $event)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(BankAccount $bankAccount)
     {
-        return view('events.edit', compact('event'));
+        return view('bank-accounts.edit', compact('bankAccount'));
     }
 
-    public function update(Request $request, Event $event)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, BankAccount $bankAccount)
     {
         $data = $this->validatedData($request);
 
         if ($request->hasFile('photo')) {
-            $this->deletePhoto($event->photo);
+            $this->deletePhoto($bankAccount->photo);
             $data['photo'] = $this->storeCompressedPhoto($request->file('photo'));
         }
 
-        $event->update($data);
+        $bankAccount->update($data);
 
-        return redirect()->route('events.index')->with('success', 'Event berhasil diperbarui.');
+        return redirect()->route('bank-accounts.index')->with('success', 'Rekening bank berhasil diperbarui.');
     }
 
-    public function destroy(Event $event)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(BankAccount $bankAccount)
     {
-        $this->deletePhoto($event->photo);
-        $event->delete();
+        $this->deletePhoto($bankAccount->photo);
+        $bankAccount->delete();
 
-        return redirect()->route('events.index')->with('success', 'Event berhasil dihapus.');
+        return redirect()->route('bank-accounts.index')->with('success', 'Rekening bank berhasil dihapus.');
     }
 
     private function validatedData(Request $request): array
     {
-        $rawPrice = $request->input('price');
-        if (is_string($rawPrice)) {
-            $normalizedDigits = preg_replace('/[^0-9]/', '', $rawPrice);
-            $request->merge([
-                'price' => $normalizedDigits !== '' ? (float) $normalizedDigits : null,
-            ]);
-        }
-
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'event_date' => 'nullable|date',
-            'location' => 'nullable|string|max:255',
-            'price' => 'required|numeric|min:0',
+        return $request->validate([
+            'nama_bank' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
+            'no_rek' => 'required|string|max:255',
             'photo' => 'nullable|image|max:2048',
         ]);
-
-        if (!empty($validated['event_date'])) {
-            $validated['event_date'] = Carbon::parse($validated['event_date'])->format('Y-m-d');
-        } else {
-            $validated['event_date'] = null;
-        }
-
-        return $validated;
     }
 
     private function storeCompressedPhoto(UploadedFile $file): string
     {
-        $destination = public_path('foto/events');
+        $destination = public_path('foto/bank-accounts');
         if (!is_dir($destination)) {
             @mkdir($destination, 0755, true);
         }
 
         $targetSize = 250 * 1024; // 250 KB
         $filename = Str::uuid()->toString() . '.jpg';
-        $relativePath = 'foto/events/' . $filename;
+        $relativePath = 'foto/bank-accounts/' . $filename;
 
         $imageData = @file_get_contents($file->getRealPath());
         if ($imageData === false) {
@@ -164,7 +162,7 @@ class EventController extends Controller
         imagefilledrectangle($canvas, 0, 0, $width, $height, $bg);
         imagecopyresampled($canvas, $source, 0, 0, 0, 0, $width, $height, $width, $height);
 
-        $tempPath = tempnam(sys_get_temp_dir(), 'event_photo_');
+        $tempPath = tempnam(sys_get_temp_dir(), 'bank_account_photo_');
         $quality = 85;
         $currentSize = null;
 
@@ -185,7 +183,7 @@ class EventController extends Controller
             $finalPath = $destination . DIRECTORY_SEPARATOR . $filename;
             if (!@rename($tempPath, $finalPath)) {
                 if (!@copy($tempPath, $finalPath)) {
-                    throw new \RuntimeException('Gagal menyimpan foto event.');
+                    throw new \RuntimeException('Gagal menyimpan foto rekening bank.');
                 }
                 @unlink($tempPath);
             }

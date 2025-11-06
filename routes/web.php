@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\PositionRequestController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\HomeBannerController as AdminHomeBannerController;
+use App\Http\Controllers\Admin\BankAccountController;
+use App\Http\Controllers\Admin\EventOrderController;
 
 
 Route::get('/', function () {
@@ -50,6 +52,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('events', EventController::class)->except(['show']);
     Route::resource('home-banners', AdminHomeBannerController::class)->except(['show']);
     Route::patch('home-banners/{homeBanner}/toggle', [AdminHomeBannerController::class, 'toggle'])->name('home-banners.toggle');
+
+    // Bank Accounts management
+    Route::resource('bank-accounts', BankAccountController::class)->except(['show']);
+
+    // Event Orders management
+    Route::prefix('event-orders')->name('event-orders.')->group(function () {
+        Route::get('/', [EventOrderController::class, 'index'])->name('index');
+        Route::get('/{eventOrder}', [EventOrderController::class, 'show'])->name('show');
+        Route::post('/{eventOrder}/approve', [EventOrderController::class, 'approve'])->name('approve');
+        Route::post('/{eventOrder}/reject', [EventOrderController::class, 'reject'])->name('reject');
+        Route::delete('/{eventOrder}', [EventOrderController::class, 'destroy'])->name('destroy');
+    });
 
     Route::resource('generations', GenerationController::class)->except(['show']);
     Route::resource('participants', ParticipantController::class)->except(['show']);

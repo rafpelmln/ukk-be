@@ -63,6 +63,23 @@
                         </label>
                     </div>
 
+                    <label class="block sm:w-1/2">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Harga Tiket</span>
+                        <input
+                            type="text"
+                            name="price"
+                            value="{{ old('price') }}"
+                            placeholder="Misal: Rp 50.000"
+                            data-event-price
+                            required
+                            class="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100"
+                        >
+                        <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">Masukkan harga tiket. Gunakan 0 jika gratis.</p>
+                        @error('price')
+                            <p class="mt-1 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                        @enderror
+                    </label>
+
                     <label class="block">
                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Deskripsi</span>
                         <textarea
@@ -130,6 +147,7 @@
             const form = document.querySelector('form[data-event-form="create"]');
             const photoInput = document.getElementById('photo-input');
             const alertBox = document.getElementById('photo-alert');
+            const priceInput = document.querySelector('[data-event-price]');
             const sizeLimit = 2 * 1024 * 1024; // 2 MB
 
             function showPhotoError(message) {
@@ -142,6 +160,29 @@
                 if (!alertBox) return;
                 alertBox.textContent = '';
                 alertBox.classList.add('hidden');
+            }
+
+            const cleanIDR = (value) => (value || '').toString().replace(/[^0-9]/g, '');
+            const formatIDR = (digits) => {
+                if (!digits) return '';
+                const number = Number(digits);
+                if (!Number.isFinite(number)) return '';
+                return 'Rp ' + new Intl.NumberFormat('id-ID').format(number);
+            };
+
+            function formatPriceInput() {
+                if (!priceInput) return;
+                const digits = cleanIDR(priceInput.value);
+                priceInput.value = digits ? formatIDR(digits) : '';
+            }
+
+            if (priceInput) {
+                formatPriceInput();
+                priceInput.addEventListener('input', () => {
+                    const digits = cleanIDR(priceInput.value);
+                    priceInput.value = digits ? formatIDR(digits) : '';
+                });
+                priceInput.addEventListener('blur', formatPriceInput);
             }
 
             if (photoInput) {
@@ -157,6 +198,17 @@
 
             if (form) {
                 form.addEventListener('submit', function (event) {
+                    if (priceInput) {
+                        const digits = cleanIDR(priceInput.value);
+                        if (!digits) {
+                            event.preventDefault();
+                            priceInput.value = '';
+                            priceInput.focus();
+                            return;
+                        }
+                        priceInput.value = digits;
+                    }
+
                     if (photoInput && photoInput.files && photoInput.files[0] && photoInput.files[0].size > sizeLimit) {
                         event.preventDefault();
                         showPhotoError('Ukuran file melebihi 2 MB. Silakan pilih gambar lain.');

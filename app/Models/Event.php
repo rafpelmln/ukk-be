@@ -17,11 +17,13 @@ class Event extends Model
         'description',
         'event_date',
         'location',
+        'price',
         'photo',
     ];
 
     protected $casts = [
         'event_date' => 'date',
+        'price' => 'decimal:2',
     ];
 
     protected $appends = ['photo_url'];
