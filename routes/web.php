@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\GenerationController;
 use App\Http\Controllers\Admin\ParticipantController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\PositionRequestController;
+use App\Http\Controllers\Admin\EventController;
 
 
 Route::get('/', function () {
@@ -43,6 +44,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // News CRUD
     Route::resource('news', NewsController::class);
+
+    // Events management
+    Route::resource('events', EventController::class)->except(['show']);
 
     Route::resource('generations', GenerationController::class)->except(['show']);
     Route::resource('participants', ParticipantController::class)->except(['show']);

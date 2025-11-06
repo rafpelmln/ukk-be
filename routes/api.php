@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthParticipantsController;
 use App\Http\Controllers\Api\NewsController;
+use App\Http\Controllers\Api\EventController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -26,3 +27,7 @@ Route::get('/test', function () {
 // News 
 Route::get('/news', [NewsController::class, 'index']);
 Route::get('/news/{id}', [NewsController::class, 'show']);
+
+// Events
+Route::get('/events', [EventController::class, 'index']);
+Route::get('/events/{id}', [EventController::class, 'show']);

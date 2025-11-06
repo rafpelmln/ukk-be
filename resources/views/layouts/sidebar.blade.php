@@ -32,6 +32,19 @@
             ],
         ],
         [
+            'icon' => 'calendar-days',
+            'label' => 'Events',
+            'route' => route('events.index'),
+            'active' => [
+                'events.index',
+                'events.create',
+                'events.store',
+                'events.edit',
+                'events.update',
+                'events.destroy',
+            ],
+        ],
+        [
             'icon' => 'users',
             'label' => 'Participants',
             'active' => ['participants.*', 'position-requests.*'],
