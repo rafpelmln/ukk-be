@@ -34,7 +34,6 @@
         [
             'icon' => 'calendar-days',
             'label' => 'Events',
-            'route' => route('events.index'),
             'active' => [
                 'events.index',
                 'events.create',
@@ -42,6 +41,36 @@
                 'events.edit',
                 'events.update',
                 'events.destroy',
+                'event-orders.index',
+                'event-orders.show',
+                'event-orders.approve',
+                'event-orders.reject',
+                'event-orders.destroy',
+            ],
+            'children' => [
+                [
+                    'label' => 'Daftar Event',
+                    'route' => route('events.index'),
+                    'active' => [
+                        'events.index',
+                        'events.create',
+                        'events.store',
+                        'events.edit',
+                        'events.update',
+                        'events.destroy',
+                    ],
+                ],
+                [
+                    'label' => 'Order Event',
+                    'route' => route('event-orders.index'),
+                    'active' => [
+                        'event-orders.index',
+                        'event-orders.show',
+                        'event-orders.approve',
+                        'event-orders.reject',
+                        'event-orders.destroy',
+                    ],
+                ],
             ],
         ],
         [
@@ -69,18 +98,6 @@
                 'bank-accounts.edit',
                 'bank-accounts.update',
                 'bank-accounts.destroy',
-            ],
-        ],
-        [
-            'icon' => 'shopping-cart',
-            'label' => 'Order Events',
-            'route' => route('event-orders.index'),
-            'active' => [
-                'event-orders.index',
-                'event-orders.show',
-                'event-orders.approve',
-                'event-orders.reject',
-                'event-orders.destroy',
             ],
         ],
         [

@@ -13,6 +13,63 @@ use Illuminate\Support\Str;
 
 class EventOrderController extends Controller
 {
+    public function index(Request $request)
+    {
+        $participantId = $request->header('X-Participant-Id') ?? $request->query('participant_id');
+
+        if (empty($participantId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Participant ID is required.',
+            ], 400);
+        }
+
+        $status = $request->query('status');
+        $allowedStatuses = ['pending', 'paid', 'expired', 'cancelled'];
+
+        $orders = EventOrder::with(['event'])
+            ->where('participant_id', $participantId)
+            ->when($status && in_array($status, $allowedStatuses, true), function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function (EventOrder $order) {
+                $event = $order->event;
+
+                return [
+                    'id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'status' => $order->status,
+                    'status_label' => $order->status_label,
+                    'status_color' => $order->status_color,
+                    'is_expired' => $order->is_expired,
+                    'quantity' => $order->quantity,
+                    'price' => $order->price,
+                    'service_fee' => $order->service_fee,
+                    'total_amount' => $order->total_amount,
+                    'payment_method' => $order->payment_method,
+                    'payment_proof_url' => $order->payment_proof_url,
+                    'created_at' => optional($order->created_at)->toISOString(),
+                    'paid_at' => optional($order->paid_at)->toISOString(),
+                    'expires_at' => optional($order->expires_at)->toISOString(),
+                    'event' => $event ? [
+                        'id' => $event->id,
+                        'title' => $event->title,
+                        'subtitle' => $event->subtitle,
+                        'photo_url' => $event->photo_url,
+                        'event_date' => optional($event->event_date)->toDateString(),
+                        'location' => $event->location,
+                    ] : null,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $orders,
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -130,7 +187,11 @@ class EventOrderController extends Controller
         }
 
         $request->validate([
-            'payment_proof' => 'required|image|max:2048',
+            'payment_proof' => 'required|image|max:5120', // up to 5 MB
+        ], [
+            'payment_proof.required' => 'Bukti pembayaran wajib diunggah.',
+            'payment_proof.image' => 'Bukti pembayaran harus berupa gambar.',
+            'payment_proof.max' => 'Ukuran maksimal bukti pembayaran adalah 5 MB.',
         ]);
 
         if ($request->hasFile('payment_proof')) {
@@ -157,13 +218,13 @@ class EventOrderController extends Controller
 
     private function storePaymentProof($file): string
     {
-        $destination = public_path('foto/payment-proofs');
+        $destination = public_path('foto/proofs-event');
         if (!is_dir($destination)) {
             @mkdir($destination, 0755, true);
         }
 
         $filename = Str::uuid()->toString() . '.jpg';
-        $relativePath = 'foto/payment-proofs/' . $filename;
+        $relativePath = 'foto/proofs-event/' . $filename;
 
         // Simple file move for payment proofs (no compression needed)
         $file->move($destination, $filename);

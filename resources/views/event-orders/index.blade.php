@@ -163,18 +163,23 @@
                                                     <i class="fa-solid fa-eye"></i>
                                                 </a>
                                                 @if($order->status === 'pending')
-                                                    <form action="{{ route('event-orders.approve', $order) }}" method="POST"
-                                                          data-confirm-approve
+                                                    <form id="approve-form-{{ $order->id }}"
+                                                          action="{{ route('event-orders.approve', $order) }}"
+                                                          method="POST"
+                                                          data-confirm-approve="approve-form-{{ $order->id }}"
                                                           data-confirm-title="Konfirmasi Pembayaran"
-                                                          data-confirm-message="Apakah Anda yakin ingin mengkonfirmasi pembayaran order ini?">
+                                                          data-confirm-message="Apakah Anda yakin ingin mengkonfirmasi pembayaran order ini?"
+                                                          data-confirm-button="Konfirmasi">
                                                         @csrf
                                                         <button type="submit" class="text-slate-500 transition hover:text-emerald-600" title="Konfirmasi">
                                                             <i class="fa-solid fa-check"></i>
                                                         </button>
                                                     </form>
                                                 @endif
-                                                <form action="{{ route('event-orders.destroy', $order) }}" method="POST"
-                                                      data-confirm-delete
+                                                <form id="delete-order-form-{{ $order->id }}"
+                                                      action="{{ route('event-orders.destroy', $order) }}"
+                                                      method="POST"
+                                                      data-confirm-delete="delete-order-form-{{ $order->id }}"
                                                       data-confirm-title="Hapus Order"
                                                       data-confirm-message="Apakah Anda yakin ingin menghapus order ini?">
                                                     @csrf

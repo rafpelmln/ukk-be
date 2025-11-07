@@ -42,6 +42,7 @@ Route::get('/bank-accounts', [BankAccountController::class, 'index']);
 
 // Event orders
 use App\Http\Controllers\Api\EventOrderController;
+Route::get('/event-orders', [EventOrderController::class, 'index']);
 Route::post('/event-orders', [EventOrderController::class, 'store']);
 Route::get('/event-orders/{id}', [EventOrderController::class, 'show']);
 Route::post('/event-orders/{id}/upload-payment-proof', [EventOrderController::class, 'uploadPaymentProof']);

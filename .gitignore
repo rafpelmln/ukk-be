@@ -16,6 +16,7 @@
 # /public/build
 /public/hot
 /public/storage
+/public/foto/proofs-event
 /storage/*.key
 /storage/pail
 /vendor

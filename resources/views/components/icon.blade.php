@@ -11,6 +11,8 @@
         'gear' => 'fa-solid fa-gear',
         'calendar-days' => 'fa-solid fa-calendar-days',
         'image' => 'fa-regular fa-image',
+        'credit-card' => 'fa-regular fa-credit-card',
+        'shopping-cart' => 'fa-solid fa-cart-shopping',
     ];
 
     $iconClass = $icons[(string) ($name ?? '')] ?? 'fa-solid fa-circle';

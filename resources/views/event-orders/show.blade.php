@@ -158,10 +158,13 @@
                     <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Aksi</h3>
 
                     <div class="space-y-3">
-                        <form action="{{ route('event-orders.approve', $eventOrder) }}" method="POST"
-                              data-confirm-approve
+                        <form id="approve-order-form-{{ $eventOrder->id }}"
+                              action="{{ route('event-orders.approve', $eventOrder) }}"
+                              method="POST"
+                              data-confirm-approve="approve-order-form-{{ $eventOrder->id }}"
                               data-confirm-title="Konfirmasi Pembayaran"
-                              data-confirm-message="Apakah Anda yakin ingin mengkonfirmasi pembayaran order ini?">
+                              data-confirm-message="Apakah Anda yakin ingin mengkonfirmasi pembayaran order ini?"
+                              data-confirm-button="Konfirmasi">
                             @csrf
                             <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-700">
                                 <i class="fa-solid fa-check"></i>

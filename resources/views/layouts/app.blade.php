@@ -55,28 +55,39 @@
             if (approveBtn) {
                 e.preventDefault();
                 const formId = approveBtn.dataset.confirmApprove;
-                const name = approveBtn.dataset.participantName || '';
-                const title = name ? `Setujui pengajuan ${name}?` : 'Setujui pengajuan ini?';
+                const form = formId ? document.getElementById(formId) : approveBtn.closest('form');
+                if (!form) {
+                    console.warn('Confirm approve target missing form reference');
+                    return;
+                }
 
-                const doSubmit = () => {
-                    const form = document.getElementById(formId);
-                    if (form) form.submit();
-                };
+                const name = approveBtn.dataset.participantName || '';
+                const customTitle = approveBtn.dataset.confirmTitle;
+                const customMessage = approveBtn.dataset.confirmMessage;
+                const customButton = approveBtn.dataset.confirmButton;
+                const customColor = approveBtn.dataset.confirmColor;
+
+                const title = customTitle ?? (name ? `Setujui pengajuan ${name}?` : 'Setujui pengajuan ini?');
+                const message = customMessage ?? 'Tindakan ini akan menyetujui pengajuan peserta.';
+                const confirmText = customButton ?? 'Setujui';
+                const confirmColor = customColor ?? '#10B981';
+
+                const doSubmit = () => form.submit();
 
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
-                        title: title,
-                        text: 'Tindakan ini akan menyetujui pengajuan peserta.',
+                        title,
+                        text: message,
                         icon: 'question',
                         showCancelButton: true,
-                        confirmButtonText: 'Setujui',
+                        confirmButtonText: confirmText,
                         cancelButtonText: 'Batal',
-                        confirmButtonColor: '#10B981',
+                        confirmButtonColor: confirmColor,
                     }).then((result) => {
                         if (result.isConfirmed) doSubmit();
                     });
                 } else {
-                    if (confirm(title + '\n\nTindakan ini akan menyetujui pengajuan peserta.')) doSubmit();
+                    if (confirm(`${title}\n\n${message}`)) doSubmit();
                 }
             }
 
@@ -84,18 +95,24 @@
             if (deleteBtn) {
                 e.preventDefault();
                 const formId = deleteBtn.dataset.confirmDelete;
-                const name = deleteBtn.dataset.participantName || '';
-                const title = name ? `Hapus peserta ${name}?` : 'Hapus peserta ini?';
+                const form = formId ? document.getElementById(formId) : deleteBtn.closest('form');
+                if (!form) {
+                    console.warn('Confirm delete target missing form reference');
+                    return;
+                }
 
-                const doSubmit = () => {
-                    const form = document.getElementById(formId);
-                    if (form) form.submit();
-                };
+                const name = deleteBtn.dataset.participantName || '';
+                const customTitle = deleteBtn.dataset.confirmTitle;
+                const customMessage = deleteBtn.dataset.confirmMessage;
+                const title = customTitle ?? (name ? `Hapus peserta ${name}?` : 'Hapus peserta ini?');
+                const message = customMessage ?? 'Tindakan ini tidak dapat dikembalikan.';
+
+                const doSubmit = () => form.submit();
 
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
-                        title: title,
-                        text: 'Tindakan ini tidak dapat dikembalikan.',
+                        title,
+                        text: message,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonText: 'Hapus',
@@ -105,7 +122,7 @@
                         if (result.isConfirmed) doSubmit();
                     });
                 } else {
-                    if (confirm(title + '\n\nTindakan ini tidak dapat dikembalikan.')) doSubmit();
+                    if (confirm(`${title}\n\n${message}`)) doSubmit();
                 }
             }
 
