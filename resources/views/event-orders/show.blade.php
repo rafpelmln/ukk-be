@@ -114,11 +114,6 @@
                             <span class="text-slate-900 dark:text-white">Rp {{ number_format($eventOrder->price * $eventOrder->quantity, 0, ',', '.') }}</span>
                         </div>
 
-                        <div class="flex justify-between text-sm">
-                            <span class="text-slate-600 dark:text-slate-300">Biaya Layanan</span>
-                            <span class="text-slate-900 dark:text-white">Rp {{ number_format($eventOrder->service_fee, 0, ',', '.') }}</span>
-                        </div>
-
                         <div class="border-t border-slate-200 pt-3 dark:border-slate-700">
                             <div class="flex justify-between font-semibold">
                                 <span class="text-slate-900 dark:text-white">Total</span>

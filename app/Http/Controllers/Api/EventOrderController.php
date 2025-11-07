@@ -83,12 +83,12 @@ class EventOrderController extends Controller
         $event = Event::findOrFail($validated['event_id']);
         $participant = Participant::findOrFail($validated['participant_id']);
 
-        // Calculate amounts
+        // Calculate amounts tanpa biaya layanan tambahan
         $price = $event->price ?? 0;
         $quantity = $validated['quantity'];
         $subtotal = $price * $quantity;
-        $serviceFee = $subtotal * 0.07; // 7% service fee
-        $totalAmount = $subtotal + $serviceFee;
+        $serviceFee = 0;
+        $totalAmount = $subtotal;
 
         // Create order
         $order = EventOrder::create([
