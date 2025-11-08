@@ -25,7 +25,7 @@ class EventOrderController extends Controller
         }
 
         $status = $request->query('status');
-        $allowedStatuses = ['pending', 'paid', 'expired', 'cancelled'];
+        $allowedStatuses = ['pending', 'paid', 'completed', 'expired', 'cancelled'];
 
         $orders = EventOrder::with(['event'])
             ->where('participant_id', $participantId)
@@ -53,6 +53,7 @@ class EventOrderController extends Controller
                     'created_at' => optional($order->created_at)->toISOString(),
                     'paid_at' => optional($order->paid_at)->toISOString(),
                     'expires_at' => optional($order->expires_at)->toISOString(),
+                    'checked_in_at' => optional($order->checked_in_at)->toISOString(),
                     'event' => $event ? [
                         'id' => $event->id,
                         'title' => $event->title,
@@ -158,6 +159,7 @@ class EventOrderController extends Controller
                 'total_amount' => $order->total_amount,
                 'payment_method' => $order->payment_method,
                 'status' => $order->status,
+                'checked_in_at' => optional($order->checked_in_at)->toISOString(),
                 'expires_at' => $order->expires_at->toISOString(),
                 'payment_proof_url' => $order->payment_proof_url,
                 'event' => [

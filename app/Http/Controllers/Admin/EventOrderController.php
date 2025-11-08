@@ -98,6 +98,20 @@ class EventOrderController extends Controller
         return back()->with('success', 'Pembayaran order berhasil dikonfirmasi.');
     }
 
+    public function checkIn(Request $request, EventOrder $eventOrder)
+    {
+        if ($eventOrder->status !== 'paid') {
+            return back()->with('error', 'Order ini belum dapat dikonfirmasi gate.');
+        }
+
+        $eventOrder->update([
+            'status' => 'completed',
+            'checked_in_at' => now(),
+        ]);
+
+        return back()->with('success', 'Tiket berhasil dikonfirmasi di gate.');
+    }
+
     /**
      * Reject/cancel order
      */

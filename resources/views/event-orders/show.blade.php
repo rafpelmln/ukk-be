@@ -99,6 +99,13 @@
                         </div>
                     </div>
                     @endif
+
+                    @if($eventOrder->checked_in_at)
+                    <div class="mt-6">
+                        <label class="text-sm font-medium text-slate-600 dark:text-slate-300">Waktu Check-in</label>
+                        <p class="mt-2 text-sm font-semibold text-emerald-600">{{ $eventOrder->checked_in_at->format('d M Y H:i') }}</p>
+                    </div>
+                    @endif
                 </div>
             </div>
 

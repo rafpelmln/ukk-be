@@ -128,6 +128,9 @@
                                         <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">{{ $event->created_at->format('d M Y H:i') }}</td>
                                         <td class="px-6 py-4">
                                             <div class="flex items-center justify-center gap-3 text-base">
+                                                <a href="{{ route('events.show', $event) }}" class="text-slate-500 transition hover:text-indigo-600" title="Detail">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
                                                 <a href="{{ route('events.edit', $event) }}" class="text-slate-500 transition hover:text-indigo-600" title="Edit">
                                                     <i class="fa-solid fa-pen"></i>
                                                 </a>

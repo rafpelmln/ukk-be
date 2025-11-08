@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\EventOrder;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
@@ -61,6 +62,27 @@ class EventController extends Controller
     public function create()
     {
         return view('events.create');
+    }
+
+    public function show(Event $event)
+    {
+        $this->finalizeEventOrders($event);
+
+        $event->loadCount('orders');
+
+        $orders = EventOrder::with(['participant'])
+            ->where('event_id', $event->id)
+            ->latest()
+            ->get();
+
+        $summary = [
+            'total' => $orders->count(),
+            'pending' => $orders->where('status', 'pending')->count(),
+            'paid' => $orders->where('status', 'paid')->count(),
+            'completed' => $orders->where('status', 'completed')->count(),
+        ];
+
+        return view('events.show', compact('event', 'orders', 'summary'));
     }
 
     public function store(Request $request)
@@ -221,5 +243,26 @@ class EventController extends Controller
         if (Storage::disk('public')->exists($path)) {
             Storage::disk('public')->delete($path);
         }
+    }
+
+    private function finalizeEventOrders(Event $event): void
+    {
+        if (!$event->event_date) {
+            return;
+        }
+
+        $cutoff = Carbon::parse($event->event_date)->addDay()->endOfDay();
+
+        if (now()->lessThanOrEqualTo($cutoff)) {
+            return;
+        }
+
+        EventOrder::where('event_id', $event->id)
+            ->where('status', 'paid')
+            ->whereNull('checked_in_at')
+            ->update([
+                'status' => 'completed',
+                'checked_in_at' => now(),
+            ]);
     }
 }

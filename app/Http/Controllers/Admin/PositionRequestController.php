@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PositionRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class PositionRequestController extends Controller
@@ -60,13 +61,21 @@ class PositionRequestController extends Controller
 
     public function approve(PositionRequest $positionRequest): RedirectResponse
     {
-        $positionRequest->update(['status' => 'approved']);
+        DB::transaction(function () use ($positionRequest) {
+            $positionRequest->update(['status' => 'approved']);
 
-        // Optionally attach the position to participant
-        // $positionRequest->participant->positions()->syncWithoutDetaching([$positionRequest->position_id]);
+            $participant = $positionRequest->participant()->lockForUpdate()->first();
+            $positionId = $positionRequest->position_id;
+
+            if ($participant && $positionId) {
+                $participant->positions()->sync([$positionId]);
+            }
+        });
+
+        $participantName = optional($positionRequest->participant)->name ?? 'peserta';
 
         return redirect()->route('position-requests.index')
-            ->with('success', "Pengajuan untuk {$positionRequest->participant->name} telah disetujui.");
+            ->with('success', "Pengajuan untuk {$participantName} telah disetujui.");
     }
 
     public function reject(Request $request, PositionRequest $positionRequest): RedirectResponse

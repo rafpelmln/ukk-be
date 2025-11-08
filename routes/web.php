@@ -49,7 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('news', NewsController::class);
 
     // Events management
-    Route::resource('events', EventController::class)->except(['show']);
+    Route::resource('events', EventController::class);
     Route::resource('home-banners', AdminHomeBannerController::class)->except(['show']);
     Route::patch('home-banners/{homeBanner}/toggle', [AdminHomeBannerController::class, 'toggle'])->name('home-banners.toggle');
 
@@ -62,6 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{eventOrder}', [EventOrderController::class, 'show'])->name('show');
         Route::post('/{eventOrder}/approve', [EventOrderController::class, 'approve'])->name('approve');
         Route::post('/{eventOrder}/reject', [EventOrderController::class, 'reject'])->name('reject');
+        Route::post('/{eventOrder}/check-in', [EventOrderController::class, 'checkIn'])->name('check-in');
         Route::delete('/{eventOrder}', [EventOrderController::class, 'destroy'])->name('destroy');
     });
 

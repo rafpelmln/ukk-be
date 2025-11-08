@@ -26,6 +26,7 @@ class EventOrder extends Model
         'payment_proof',
         'expires_at',
         'paid_at',
+        'checked_in_at',
     ];
 
     protected $casts = [
@@ -34,6 +35,7 @@ class EventOrder extends Model
         'total_amount' => 'decimal:2',
         'expires_at' => 'datetime',
         'paid_at' => 'datetime',
+        'checked_in_at' => 'datetime',
     ];
 
     protected static function boot()
@@ -95,6 +97,7 @@ class EventOrder extends Model
         return match($this->status) {
             'pending' => 'Menunggu Pembayaran',
             'paid' => 'Sudah Bayar',
+            'completed' => 'Selesai',
             'expired' => 'Expired',
             'cancelled' => 'Dibatalkan',
             default => ucfirst($this->status)
@@ -105,7 +108,7 @@ class EventOrder extends Model
     {
         return match($this->status) {
             'pending' => 'text-amber-600 bg-amber-100',
-            'paid' => 'text-emerald-600 bg-emerald-100',
+            'paid', 'completed' => 'text-emerald-600 bg-emerald-100',
             'expired' => 'text-slate-600 bg-slate-100',
             'cancelled' => 'text-rose-600 bg-rose-100',
             default => 'text-slate-600 bg-slate-100'
