@@ -97,16 +97,16 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4">
-                                            @php
-                                                $statusClasses = [
-                                                    'scheduled' => 'bg-slate-100 text-slate-700 border-slate-200',
-                                                    'completed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                                    'cancelled' => 'bg-rose-50 text-rose-700 border-rose-200',
-                                                ];
-                                            @endphp
-                                            <span class="inline-flex rounded-full border px-3 py-1 text-xs font-semibold {{ $statusClasses[$activity->status] ?? 'bg-slate-100 text-slate-600 border-slate-200' }}">
-                                                {{ ucfirst($activity->status) }}
-                                            </span>
+                                        @php
+                                            $statusClasses = [
+                                                'scheduled' => 'bg-slate-100 text-slate-700 border-slate-200',
+                                                'completed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                'cancelled' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                            ];
+                                        @endphp
+                                        <span class="inline-flex rounded-full border px-3 py-1 text-xs font-semibold {{ $statusClasses[$activity->status] ?? 'bg-slate-100 text-slate-600 border-slate-200' }}">
+                                            {{ $activity->status_label }}
+                                        </span>
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="flex items-center justify-center gap-3 text-base">

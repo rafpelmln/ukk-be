@@ -42,7 +42,7 @@
                                     ];
                                 @endphp
                                 <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $statusMap[$activity->status] ?? 'bg-slate-100 text-slate-700' }}">
-                                    {{ ucfirst($activity->status) }}
+                                    {{ $activity->status_label }}
                                 </span>
                             </dd>
                         </div>
@@ -122,7 +122,7 @@
                                     <p class="font-semibold text-slate-900 dark:text-white">{{ $report->participant->name ?? '-' }}</p>
                                     <p class="text-xs text-slate-500">{{ $report->participant->email ?? '-' }}</p>
                                 </td>
-                                <td class="px-4 py-3 capitalize">{{ $report->status }}</td>
+                                <td class="px-4 py-3 capitalize">{{ $report->status_label }}</td>
                                 <td class="px-4 py-3">{{ optional($report->checked_in_at)->translatedFormat('d F Y H:i') ?: '—' }}</td>
                                 <td class="px-4 py-3 text-slate-500">{{ $report->notes ?? '—' }}</td>
                             </tr>

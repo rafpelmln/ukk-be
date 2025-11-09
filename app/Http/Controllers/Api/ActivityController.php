@@ -19,7 +19,7 @@ class ActivityController extends Controller
 
         $query = Activity::with('positions')
             ->where('status', '!=', 'cancelled')
-            ->orderBy('datetime');
+            ->orderByDesc('datetime');
 
         if ($participant) {
             $query->visibleForParticipant($participant);

@@ -27,6 +27,8 @@ class Activity extends Model
         'is_finished',
     ];
 
+    protected $appends = ['status_label'];
+
     protected $casts = [
         'datetime' => 'datetime',
         'is_finished' => 'boolean',
@@ -102,5 +104,14 @@ class Activity extends Model
     public function getScheduleLabelAttribute(): string
     {
         return optional($this->datetime)->translatedFormat('d F Y H:i');
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return [
+            'scheduled' => 'Terjadwal',
+            'completed' => 'Selesai',
+            'cancelled' => 'Dibatalkan',
+        ][$this->status] ?? ucfirst($this->status ?? '-');
     }
 }

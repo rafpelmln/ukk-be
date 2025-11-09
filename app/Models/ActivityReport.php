@@ -27,6 +27,8 @@ class ActivityReport extends Model
         'checked_in_at' => 'datetime',
     ];
 
+    protected $appends = ['status_label'];
+
     protected static function booted(): void
     {
         static::creating(function (ActivityReport $report) {
@@ -48,5 +50,14 @@ class ActivityReport extends Model
     public function participant(): BelongsTo
     {
         return $this->belongsTo(Participant::class);
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return [
+            'present' => 'Hadir',
+            'excused' => 'Izin',
+            'absent' => 'Absen',
+        ][$this->status] ?? ucfirst($this->status ?? '-');
     }
 }
