@@ -19,6 +19,7 @@
                 @method('PUT')
                 @include('leadership-structures.partials.form', [
                     'structure' => $structure,
+                    'generations' => $generations,
                     'submitLabel' => 'Perbarui Periode',
                     'redirectUrl' => request('redirect', route('leadership-structures.index')),
                 ])

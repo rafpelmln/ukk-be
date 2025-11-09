@@ -18,6 +18,7 @@
                 @csrf
                 @include('leadership-structures.partials.form', [
                     'structure' => null,
+                    'generations' => $generations,
                     'submitLabel' => 'Simpan Periode',
                     'redirectUrl' => request('redirect', route('leadership-structures.index')),
                 ])

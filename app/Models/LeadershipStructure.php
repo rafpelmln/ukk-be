@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class LeadershipStructure extends Model
@@ -18,6 +19,7 @@ class LeadershipStructure extends Model
 
     protected $fillable = [
         'id',
+        'generation_id',
         'period_label',
         'period_year',
         'is_active',
@@ -46,5 +48,10 @@ class LeadershipStructure extends Model
     public function roles(): HasMany
     {
         return $this->hasMany(LeadershipStructureRole::class)->orderBy('display_order');
+    }
+
+    public function generation(): BelongsTo
+    {
+        return $this->belongsTo(Generation::class, 'generation_id');
     }
 }

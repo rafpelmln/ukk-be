@@ -2,6 +2,7 @@
     $structure = $structure ?? null;
     $rawActive = old('is_active', $structure->is_active ?? false);
     $isActive = filter_var($rawActive, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false;
+    $selectedGeneration = old('generation_id', $structure->generation_id ?? '');
 
     $baseRoles = $structure?->roles ?? collect();
     $oldRoles = collect(old('roles', []));
@@ -35,32 +36,26 @@
 
 <div class="grid gap-6">
     <div class="grid gap-4 md:grid-cols-2">
-        <label class="block">
-            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Nama Periode</span>
-            <input
-                type="text"
-                name="period_label"
-                value="{{ old('period_label', $structure->period_label ?? '') }}"
+        <label class="block md:col-span-2">
+            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Periode (Generasi)</span>
+            <select
+                name="generation_id"
                 class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                placeholder="Contoh: Periode 2025 - Sekarang"
                 required
             >
-            @error('period_label')
-                <p class="mt-1 text-xs text-rose-600 dark:text-rose-300">{{ $message }}</p>
-            @enderror
-        </label>
-
-        <label class="block">
-            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Tahun Periode</span>
-            <input
-                type="text"
-                name="period_year"
-                value="{{ old('period_year', $structure->period_year ?? '') }}"
-                class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                placeholder="Misal: 2025 - 2026"
-                required
-            >
-            @error('period_year')
+                <option value="">Pilih generasi...</option>
+                @foreach ($generations as $generation)
+                    @php
+                        $start = optional($generation->started_at)->format('Y') ?? '—';
+                        $end = optional($generation->ended_at)->format('Y') ?? 'Sekarang';
+                    @endphp
+                    <option value="{{ $generation->id }}" @selected($selectedGeneration === $generation->id)>
+                        {{ $generation->name }} ({{ $start }} - {{ $end }})
+                    </option>
+                @endforeach
+            </select>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Nama periode dan rentang tahun otomatis mengikuti data generasi.</p>
+            @error('generation_id')
                 <p class="mt-1 text-xs text-rose-600 dark:text-rose-300">{{ $message }}</p>
             @enderror
         </label>

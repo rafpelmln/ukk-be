@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LeadershipStructureRequest;
 use App\Models\LeadershipStructure;
+use App\Models\Generation;
 use App\Models\LeadershipStructureRole;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class LeadershipStructureController extends Controller
         }
 
         $structures = LeadershipStructure::query()
-            ->with('roles')
+            ->with(['roles', 'generation'])
             ->orderByDesc('is_active')
             ->orderByDesc('period_year')
             ->paginate($perPage)
@@ -35,7 +36,11 @@ class LeadershipStructureController extends Controller
 
     public function create(): View
     {
-        return view('leadership-structures.create');
+        $generations = Generation::orderByDesc('started_at')->get();
+
+        return view('leadership-structures.create', [
+            'generations' => $generations,
+        ]);
     }
 
     public function store(LeadershipStructureRequest $request): RedirectResponse
@@ -54,7 +59,12 @@ class LeadershipStructureController extends Controller
     public function edit(LeadershipStructure $leadershipStructure): View
     {
         $leadershipStructure->load('roles');
-        return view('leadership-structures.edit', ['structure' => $leadershipStructure]);
+        $generations = Generation::orderByDesc('started_at')->get();
+
+        return view('leadership-structures.edit', [
+            'structure' => $leadershipStructure,
+            'generations' => $generations,
+        ]);
     }
 
     public function update(LeadershipStructureRequest $request, LeadershipStructure $leadershipStructure): RedirectResponse
@@ -115,6 +125,14 @@ class LeadershipStructureController extends Controller
             $data['general_leader_photo_path'] = $this->storeCompressedImage($request->file('general_leader_photo'));
         } elseif ($structure) {
             $data['general_leader_photo_path'] = $structure->general_leader_photo_path;
+        }
+
+        $generation = Generation::find($data['generation_id'] ?? null);
+        if ($generation) {
+            $data['period_label'] = $generation->name ?? 'Periode';
+            $start = optional($generation->started_at)->format('Y') ?? '—';
+            $end = optional($generation->ended_at)->format('Y') ?? 'Sekarang';
+            $data['period_year'] = trim($start . ' - ' . $end);
         }
 
         unset($data['general_leader_photo'], $data['roles']);

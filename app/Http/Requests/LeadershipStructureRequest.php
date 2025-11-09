@@ -26,8 +26,7 @@ class LeadershipStructureRequest extends FormRequest
         $structure = $this->route('leadership_structure');
 
         return [
-            'period_label' => 'required|string|max:100',
-            'period_year' => 'required|string|max:50',
+            'generation_id' => 'required|exists:generations,id',
             'is_active' => 'sometimes|boolean',
             'general_leader_name' => 'required|string|max:100',
             'general_leader_photo' => ($isCreate || empty($structure?->general_leader_photo_path) ? 'required' : 'nullable') . '|image|max:2048',
