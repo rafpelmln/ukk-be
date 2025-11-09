@@ -32,7 +32,7 @@
             ],
         ],
         [
-            'icon' => 'clipboard-list',
+            'icon' => 'handshake',
             'label' => 'Kegiatan / Rapat',
             'route' => route('activities.index'),
             'active' => ['activities.*'],

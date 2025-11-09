@@ -64,71 +64,92 @@
                 </a>
             </div>
 
-            <div class="mt-6 overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-200 text-sm text-slate-600 dark:divide-slate-700 dark:text-slate-200">
-                    <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-800 dark:text-slate-300">
-                        <tr>
-                            <th class="px-4 py-3 text-left">Kegiatan</th>
-                            <th class="px-4 py-3 text-left">Tanggal</th>
-                            <th class="px-4 py-3 text-left">Target</th>
-                            <th class="px-4 py-3 text-left">Status</th>
-                            <th class="px-4 py-3 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                        @forelse($activities as $activity)
-                            <tr>
-                                <td class="px-4 py-4">
-                                    <p class="font-semibold text-slate-900 dark:text-white">{{ $activity->name }}</p>
-                                    <p class="text-xs text-slate-500">{{ $activity->location ?: 'Lokasi belum ditentukan' }}</p>
-                                </td>
-                                <td class="px-4 py-4">{{ optional($activity->datetime)->translatedFormat('d F Y H:i') }}</td>
-                                <td class="px-4 py-4">
-                                    @if($activity->target_scope === 'all')
-                                        <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">Semua peserta</span>
-                                    @else
-                                        <div class="flex flex-wrap gap-1">
-                                            @foreach($activity->positions as $position)
-                                                <span class="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-600">{{ $position->name }}</span>
-                                            @endforeach
-                                        </div>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-4">
-                                    @php
-                                        $statusClasses = [
-                                            'scheduled' => 'bg-slate-100 text-slate-700',
-                                            'completed' => 'bg-emerald-100 text-emerald-700',
-                                            'cancelled' => 'bg-rose-100 text-rose-700',
-                                        ];
-                                    @endphp
-                                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $statusClasses[$activity->status] ?? 'bg-slate-100 text-slate-600' }}">
-                                        {{ ucfirst($activity->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-4 py-4">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <a href="{{ route('activities.show', $activity) }}" class="text-indigo-600 hover:text-indigo-800">Detail</a>
-                                        <a href="{{ route('activities.edit', $activity) }}" class="text-slate-500 hover:text-slate-700">Edit</a>
-                                        <form action="{{ route('activities.destroy', $activity) }}" method="POST" onsubmit="return confirm('Hapus kegiatan ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-rose-500 hover:text-rose-600">Hapus</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-sm text-slate-500">Belum ada kegiatan terdaftar.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
             <div class="mt-6">
-                {{ $activities->links() }}
+                @if ($activities->count())
+                    <div class="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+                        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-sm text-slate-600 dark:text-slate-200">
+                            <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-800">
+                                <tr>
+                                    <th class="px-6 py-3 text-left">Kegiatan</th>
+                                    <th class="px-6 py-3 text-left">Tanggal</th>
+                                    <th class="px-6 py-3 text-left">Target</th>
+                                    <th class="px-6 py-3 text-left">Status</th>
+                                    <th class="px-6 py-3 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                @foreach($activities as $activity)
+                                    <tr>
+                                        <td class="px-6 py-4">
+                                            <p class="font-semibold text-slate-900 dark:text-white">{{ $activity->name }}</p>
+                                            <p class="text-xs text-slate-500">{{ $activity->location ?: 'Lokasi belum ditentukan' }}</p>
+                                        </td>
+                                        <td class="px-6 py-4">{{ optional($activity->datetime)->translatedFormat('d F Y H:i') }}</td>
+                                        <td class="px-6 py-4">
+                                            @if($activity->target_scope === 'all')
+                                                <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">Semua peserta</span>
+                                            @else
+                                                <div class="flex flex-wrap gap-1">
+                                                    @foreach($activity->positions as $position)
+                                                        <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">{{ $position->name }}</span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            @php
+                                                $statusClasses = [
+                                                    'scheduled' => 'bg-slate-100 text-slate-700 border-slate-200',
+                                                    'completed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                    'cancelled' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                                ];
+                                            @endphp
+                                            <span class="inline-flex rounded-full border px-3 py-1 text-xs font-semibold {{ $statusClasses[$activity->status] ?? 'bg-slate-100 text-slate-600 border-slate-200' }}">
+                                                {{ ucfirst($activity->status) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center justify-center gap-3 text-base">
+                                                <a href="{{ route('activities.show', $activity) }}" class="text-slate-500 transition hover:text-indigo-600" title="Detail">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+                                                <a href="{{ route('activities.edit', $activity) }}" class="text-slate-500 transition hover:text-indigo-600" title="Edit">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </a>
+                                                <form action="{{ route('activities.destroy', $activity) }}" method="POST" onsubmit="return confirm('Hapus kegiatan ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-slate-500 transition hover:text-rose-600" title="Hapus">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="text-sm text-slate-500">
+                            Menampilkan
+                            <span class="font-semibold text-slate-700">{{ $activities->firstItem() }}</span>
+                            sampai
+                            <span class="font-semibold text-slate-700">{{ $activities->lastItem() }}</span>
+                            dari
+                            <span class="font-semibold text-slate-700">{{ $activities->total() }}</span>
+                            kegiatan
+                        </div>
+                        <div>
+                            {{ $activities->links('vendor.pagination.tailwind-simple') }}
+                        </div>
+                    </div>
+                @else
+                    <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center text-sm text-slate-500">
+                        Belum ada kegiatan terdaftar. Tambah kegiatan baru untuk memulai.
+                    </div>
+                @endif
             </div>
         </div>
     </div>

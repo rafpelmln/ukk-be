@@ -14,6 +14,8 @@
         'credit-card' => 'fa-regular fa-credit-card',
         'shopping-cart' => 'fa-solid fa-cart-shopping',
         'circle-info' => 'fa-solid fa-circle-info',
+        'handshake' => 'fa-solid fa-handshake-simple',
+        'clipboard-list' => 'fa-solid fa-clipboard-list',
     ];
 
     $iconClass = $icons[(string) ($name ?? '')] ?? 'fa-solid fa-circle';
