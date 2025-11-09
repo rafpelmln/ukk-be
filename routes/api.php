@@ -4,10 +4,11 @@ use App\Http\Controllers\Api\AuthParticipantsController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\HomeBannerController as ApiHomeBannerController;
+use App\Http\Controllers\Api\LeadershipStructureController as ApiLeadershipStructureController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
-    Route::post('/register', [AuthParticipantsController::class, 'register']);
+    Route::post('/register', [AuthParticipantsController::class, 'register'])->name('api.participants.register');
     Route::post('/login', [AuthParticipantsController::class, 'login']);
     Route::post('/logout', [AuthParticipantsController::class, 'logout']);
     Route::get('/me', [AuthParticipantsController::class, 'me']);
@@ -35,6 +36,7 @@ Route::get('/events/{id}', [EventController::class, 'show']);
 
 // Home banners
 Route::get('/home-banners', [ApiHomeBannerController::class, 'index']);
+Route::get('/leadership-structures', [ApiLeadershipStructureController::class, 'index'])->name('api.leadership-structures.index');
 
 // Bank accounts
 use App\Http\Controllers\Api\BankAccountController;

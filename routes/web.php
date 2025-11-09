@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\HomeBannerController as AdminHomeBannerController;
 use App\Http\Controllers\Admin\BankAccountController;
 use App\Http\Controllers\Admin\EventOrderController;
+use App\Http\Controllers\Admin\LeadershipStructureController;
 
 
 Route::get('/', function () {
@@ -52,6 +53,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('events', EventController::class);
     Route::resource('home-banners', AdminHomeBannerController::class)->except(['show']);
     Route::patch('home-banners/{homeBanner}/toggle', [AdminHomeBannerController::class, 'toggle'])->name('home-banners.toggle');
+    Route::resource('leadership-structures', LeadershipStructureController::class)->except(['show']);
+    Route::patch('leadership-structures/{leadershipStructure}/toggle', [LeadershipStructureController::class, 'toggle'])->name('leadership-structures.toggle');
 
     // Bank Accounts management
     Route::resource('bank-accounts', BankAccountController::class)->except(['show']);

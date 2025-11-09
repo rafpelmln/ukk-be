@@ -88,6 +88,26 @@
             ],
         ],
         [
+            'icon' => 'circle-info',
+            'label' => 'About',
+            'active' => [
+                'leadership-structures.index',
+                'leadership-structures.create',
+                'leadership-structures.store',
+                'leadership-structures.edit',
+                'leadership-structures.update',
+                'leadership-structures.destroy',
+                'leadership-structures.toggle',
+            ],
+            'children' => [
+                [
+                    'label' => 'Struktur Kepemimpinan',
+                    'route' => route('leadership-structures.index'),
+                    'active' => ['leadership-structures.*'],
+                ],
+            ],
+        ],
+        [
             'icon' => 'credit-card',
             'label' => 'Rekening Bank',
             'route' => route('bank-accounts.index'),
