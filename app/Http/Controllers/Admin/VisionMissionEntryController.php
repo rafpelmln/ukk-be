@@ -62,14 +62,13 @@ class VisionMissionEntryController extends Controller
                 'is_active' => $data['vision_is_active'] ?? true,
             ]);
 
-            foreach ($data['missions'] as $mission) {
-                VisionMissionEntry::create([
-                    'type' => 'mission',
-                    'title' => $mission['title'] ?? 'Misi',
-                    'content' => $mission['content'],
-                    'is_active' => true,
-                ]);
-            }
+            $missionItems = array_values(array_filter($data['mission_items'] ?? []));
+            VisionMissionEntry::create([
+                'type' => 'mission',
+                'title' => $data['mission_title'] ?? 'Misi',
+                'content' => implode("\n", $missionItems),
+                'is_active' => true,
+            ]);
         });
 
         return redirect()

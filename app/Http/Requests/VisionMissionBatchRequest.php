@@ -25,9 +25,9 @@ class VisionMissionBatchRequest extends FormRequest
             'vision_title' => 'required|string|max:150',
             'vision_content' => 'required|string',
             'vision_is_active' => 'sometimes|boolean',
-            'missions' => 'required|array|min:1',
-            'missions.*.title' => 'nullable|string|max:150',
-            'missions.*.content' => 'required|string',
+            'mission_title' => 'nullable|string|max:150',
+            'mission_items' => 'required|array|min:1',
+            'mission_items.*' => 'required|string',
         ];
     }
 

@@ -48,60 +48,44 @@
                     </div>
 
                     <div class="rounded-2xl border border-slate-200 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/40">
-                        <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
-                            <div>
-                                <p class="text-sm font-semibold text-slate-800 dark:text-slate-200">Daftar Misi</p>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">Tambahkan poin misi yang menjelaskan langkah-langkah realisasi visi.</p>
+                        <div class="mb-4">
+                            <p class="text-sm font-semibold text-slate-800 dark:text-slate-200">Misi</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Masukkan judul (opsional) dan daftar poin misi.</p>
+                        </div>
+
+                        @php
+                            $defaultMission = $missions?->first();
+                            $missionTitle = old('mission_title', $defaultMission->title ?? '');
+                            $missionItems = old('mission_items', preg_split("/\r\n|\n|\r/", $defaultMission->content ?? '') ?: ['']);
+                        @endphp
+
+                        <label class="block">
+                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Judul Misi (Opsional)</span>
+                            <input type="text" name="mission_title" value="{{ $missionTitle }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white" placeholder="Contoh: Pengembangan Kapasitas">
+                        </label>
+
+                        <div class="mt-4 rounded-xl border border-slate-200 p-3 dark:border-slate-700">
+                            <div class="mb-2 flex items-center justify-between">
+                                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Poin Misi</span>
+                                <button type="button" class="text-xs font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-300" data-add-point>Tambah Poin</button>
                             </div>
-                            <button type="button" class="inline-flex items-center gap-2 rounded-lg border border-indigo-200 px-3 py-1.5 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-50 dark:border-indigo-500/40 dark:text-indigo-200 dark:hover:bg-indigo-500/10" data-add-mission>
-                                <x-icon name="plus" class="h-3.5 w-3.5" />
-                                Tambah Misi
-                            </button>
+                            <div class="space-y-2" data-point-list>
+                                @foreach ($missionItems as $point)
+                                    <div class="flex items-center gap-2" data-point-item>
+                                        <input type="text" name="mission_items[]" value="{{ $point }}" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white" placeholder="Deskripsi singkat" required>
+                                        <button type="button" class="text-xs font-semibold text-rose-500 hover:text-rose-600 dark:text-rose-300 dark:hover:text-rose-200" data-remove-point>✕</button>
+                                    </div>
+                                @endforeach
+                            </div>
+                            @error('mission_items')
+                                <p class="mt-1 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <div class="space-y-3" data-mission-repeater>
-                            @php
-                                $oldMissions = collect(old('missions', $missions?->map(fn ($m) => ['title' => $m->title, 'content' => $m->content])->toArray() ?? ['' => ['title' => '', 'content' => '']]));
-                            @endphp
-                            @foreach ($oldMissions as $mission)
-                                <div class="rounded-xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60" data-mission-item>
-                                    <div class="mb-2 flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
-                                        <span data-mission-label>Misi #{{ $loop->iteration }}</span>
-                                        <button type="button" class="text-rose-500 hover:text-rose-600 dark:text-rose-300 dark:hover:text-rose-200" data-remove-mission>Hapus</button>
-                                    </div>
-                                    <div class="grid gap-3 md:grid-cols-2">
-                                        <label class="block">
-                                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Judul Misi (Opsional)</span>
-                                            <input type="text" name="missions[{{ $loop->index }}][title]" value="{{ $mission['title'] ?? '' }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white" placeholder="Contoh: Pengembangan Kapasitas">
-                                        </label>
-                                        <label class="block">
-                                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Deskripsi Misi</span>
-                                            <textarea name="missions[{{ $loop->index }}][content]" rows="3" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white" placeholder="Jelaskan poin misi" required>{{ $mission['content'] ?? '' }}</textarea>
-                                            @error('missions.' . $loop->index . '.content')
-                                                <p class="mt-1 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p>
-                                            @enderror
-                                        </label>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <template id="mission-template">
-                            <div class="rounded-xl border border-slate-200 bg-white/70 p-4 dark:border-slate-700 dark:bg-slate-900/60" data-mission-item>
-                                <div class="mb-2 flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
-                                    <span data-mission-label>Misi</span>
-                                    <button type="button" class="text-rose-500 hover:text-rose-600 dark:text-rose-200 dark:hover:text-rose-100" data-remove-mission>Hapus</button>
-                                </div>
-                                <div class="grid gap-3 md:grid-cols-2">
-                                    <label class="block">
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Judul Misi (Opsional)</span>
-                                        <input type="text" name="missions[__INDEX__][title]" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white" placeholder="Contoh: Pengembangan Kapasitas">
-                                    </label>
-                                    <label class="block">
-                                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Deskripsi Misi</span>
-                                        <textarea name="missions[__INDEX__][content]" rows="3" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white" placeholder="Jelaskan poin misi" required></textarea>
-                                    </label>
-                                </div>
+                        <template id="mission-point-template">
+                            <div class="flex items-center gap-2" data-point-item>
+                                <input type="text" name="mission_items[]" class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white" placeholder="Deskripsi singkat" required>
+                                <button type="button" class="text-xs font-semibold text-rose-500 hover:text-rose-600 dark:text-rose-300 dark:hover:text-rose-200" data-remove-point>✕</button>
                             </div>
                         </template>
                     </div>
@@ -126,38 +110,26 @@
 
             const repeater = form.querySelector('[data-mission-repeater]');
             const addBtn = form.querySelector('[data-add-mission]');
-            const template = document.getElementById('mission-template');
+            const pointList = document.querySelector('[data-point-list]');
+            const pointTemplate = document.getElementById('mission-point-template');
+            const addPointBtn = document.querySelector('[data-add-point]');
 
-            function reindex() {
-                repeater.querySelectorAll('[data-mission-item]').forEach((item, index) => {
-                    item.querySelector('[data-mission-label]').textContent = `Misi #${index + 1}`;
-                    item.querySelectorAll('input[name^="missions["], textarea[name^="missions["]').forEach((field) => {
-                        field.name = field.name.replace(/missions\[\d+]/, `missions[${index}]`);
-                    });
-                });
-            }
-
-            addBtn?.addEventListener('click', () => {
-                if (!template || !repeater) return;
-                const clone = template.innerHTML.replace(/__INDEX__/g, repeater.children.length);
-                repeater.insertAdjacentHTML('beforeend', clone);
-                reindex();
+            addPointBtn?.addEventListener('click', () => {
+                if (!pointTemplate || !pointList) return;
+                pointList.insertAdjacentHTML('beforeend', pointTemplate.innerHTML);
             });
 
-            repeater?.addEventListener('click', (event) => {
-                const removeBtn = event.target.closest('[data-remove-mission]');
+            pointList?.addEventListener('click', (event) => {
+                const removeBtn = event.target.closest('[data-remove-point]');
                 if (!removeBtn) return;
-                const item = removeBtn.closest('[data-mission-item]');
+                const item = removeBtn.closest('[data-point-item]');
                 if (!item) return;
-                if (repeater.children.length === 1) {
-                    item.querySelectorAll('input, textarea').forEach((field) => field.value = '');
+                if (pointList.children.length === 1) {
+                    item.querySelector('input').value = '';
                     return;
                 }
                 item.remove();
-                reindex();
             });
-
-            reindex();
         });
     </script>
 </x-app-layout>

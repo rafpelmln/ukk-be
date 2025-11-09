@@ -14,7 +14,7 @@
 
     <div class="space-y-6">
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            <form action="{{ route('vision-mission.update', $entry) }}" method="POST">
+            <form action="{{ route('vision-mission.update', $entry) }}" method="POST" data-edit-form>
                 @csrf
                 @method('PUT')
                 @include('vision-mission.partials.edit-form', [
