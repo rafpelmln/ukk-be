@@ -50,6 +50,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // News CRUD
     Route::resource('news', NewsController::class);
 
+    // Activities (meetings & internal events)
+    Route::resource('activities', \App\Http\Controllers\Admin\ActivityController::class);
+
     // Events management
     Route::resource('events', EventController::class);
     Route::resource('home-banners', AdminHomeBannerController::class)->except(['show']);

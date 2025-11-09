@@ -32,6 +32,12 @@
             ],
         ],
         [
+            'icon' => 'clipboard-list',
+            'label' => 'Kegiatan / Rapat',
+            'route' => route('activities.index'),
+            'active' => ['activities.*'],
+        ],
+        [
             'icon' => 'calendar-days',
             'label' => 'Events',
             'active' => [

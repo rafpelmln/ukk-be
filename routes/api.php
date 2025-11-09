@@ -50,3 +50,8 @@ Route::get('/event-orders', [EventOrderController::class, 'index']);
 Route::post('/event-orders', [EventOrderController::class, 'store']);
 Route::get('/event-orders/{id}', [EventOrderController::class, 'show']);
 Route::post('/event-orders/{id}/upload-payment-proof', [EventOrderController::class, 'uploadPaymentProof']);
+
+use App\Http\Controllers\Api\ActivityController as ApiActivityController;
+Route::get('/activities', [ApiActivityController::class, 'index']);
+Route::get('/activities/{activity}', [ApiActivityController::class, 'show']);
+Route::post('/activities/{activity}/check-in', [ApiActivityController::class, 'checkIn']);

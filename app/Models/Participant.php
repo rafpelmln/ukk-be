@@ -76,4 +76,9 @@ class Participant extends Model
     {
         return $this->hasMany(Attendance::class);
     }
+
+    public function activityReports(): HasMany
+    {
+        return $this->hasMany(ActivityReport::class);
+    }
 }
