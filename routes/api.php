@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\HomeBannerController as ApiHomeBannerController;
 use App\Http\Controllers\Api\LeadershipStructureController as ApiLeadershipStructureController;
+use App\Http\Controllers\Api\VisionMissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -37,6 +38,7 @@ Route::get('/events/{id}', [EventController::class, 'show']);
 // Home banners
 Route::get('/home-banners', [ApiHomeBannerController::class, 'index']);
 Route::get('/leadership-structures', [ApiLeadershipStructureController::class, 'index'])->name('api.leadership-structures.index');
+Route::get('/vision-mission', [VisionMissionController::class, 'index'])->name('api.vision-mission.index');
 
 // Bank accounts
 use App\Http\Controllers\Api\BankAccountController;

@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\HomeBannerController as AdminHomeBannerController
 use App\Http\Controllers\Admin\BankAccountController;
 use App\Http\Controllers\Admin\EventOrderController;
 use App\Http\Controllers\Admin\LeadershipStructureController;
+use App\Http\Controllers\Admin\VisionMissionEntryController;
 
 
 Route::get('/', function () {
@@ -55,6 +56,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('home-banners/{homeBanner}/toggle', [AdminHomeBannerController::class, 'toggle'])->name('home-banners.toggle');
     Route::resource('leadership-structures', LeadershipStructureController::class)->except(['show']);
     Route::patch('leadership-structures/{leadershipStructure}/toggle', [LeadershipStructureController::class, 'toggle'])->name('leadership-structures.toggle');
+    Route::resource('vision-mission', VisionMissionEntryController::class, [
+        'parameters' => ['vision-mission' => 'visionMission'],
+    ])->except(['show']);
+    Route::patch('vision-mission/{visionMission}/toggle', [VisionMissionEntryController::class, 'toggle'])->name('vision-mission.toggle');
 
     // Bank Accounts management
     Route::resource('bank-accounts', BankAccountController::class)->except(['show']);
