@@ -70,9 +70,9 @@
 
 ---
 
-## Penjelasan Actor
+## Penjelasan Role
 
-### Actor (Peran):
+### Role (Peran):
 1. **Admin/Pengurus** (kiri) - Mengelola sistem, membuka pendaftaran, menyetujui pengajuan
 2. **Guest** (kanan atas) - User baru yang mendaftar, belum menjadi anggota
 3. **Anggota** (kanan bawah) - User yang sudah disetujui menjadi anggota resmi
@@ -185,36 +185,3 @@ ADMIN                           GUEST/USER                      SISTEM
                                                                   ▼
                                               [Pending Pengurus] ──(admin approve)──> [Pengurus]
 ```
-
----
-
-## Fitur Dashboard:
-
-### Dashboard Tamu (Guest):
-- Lihat profil
-- **Ajukan Menjadi Anggota** ⭐
-- Lihat status pengajuan
-
-### Dashboard Anggota:
-- Lihat profil
-- **Ajukan Menjadi Pengurus** ⭐
-- Lihat kegiatan
-- Lihat status pengajuan pengurus
-
-### Dashboard Admin/Pengurus:
-- **Kelola Position & Generation** ⭐
-- **Lihat & Review Pengajuan** ⭐
-- Kelola anggota
-- Kelola kegiatan
-- Kelola berita
-
----
-
-## Database Tables Terkait:
-
-1. **users** - Data user (email, password, dll)
-2. **positions** - Jabatan (Guest, Anggota, Pengurus, dll)
-3. **generations** - Generasi/Angkatan
-4. **participants** - Relasi user dengan position dan generation
-5. **participant_position_requests** - Pengajuan perubahan position (pending/approved/rejected)
-
