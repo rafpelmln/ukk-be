@@ -115,9 +115,9 @@ erDiagram
     }
 ```
 
-## UML Use Case - Sistem Pendaftaran Anggota
+## UML Diagram - Sistem Pendaftaran Anggota
 
-📄 **[Lihat Use Case Diagram Lengkap](docs/USE_CASE_DIAGRAM.md)**
+📄 **[Lihat UML Diagram Lengkap](docs/UML_DIAGRAM.md)**
 
 ```mermaid
 graph LR

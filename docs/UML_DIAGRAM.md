@@ -1,6 +1,6 @@
-# Use Case Diagram - Sistem Pendaftaran Anggota FOSJABAR
+# UML Diagram - Sistem Pendaftaran Anggota FOSJABAR
 
-## Use Case Diagram
+## UML Diagram
 
 ```mermaid
 graph LR
