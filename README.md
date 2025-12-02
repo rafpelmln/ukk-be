@@ -1,84 +1,83 @@
 # FosjaBar System
 
-Panel administrasi internal untuk Forum OSIS Jawa Barat. Aplikasi ini berfungsi sebagai pusat kendali konten (berita, kegiatan, event publik), manajemen partisipan, struktur kepemimpinan, serta penjualan tiket event dengan alur pembayaran terkontrol.
+Panel admin internal untuk Forum OSIS Jawa Barat. Sistem ini mengatur konten situs, kegiatan internal, peserta, struktur kepemimpinan, sampai pemesanan tiket acara.
 
 ## Fitur Utama
-- **Dashboard**: Statistik cepat peserta, event, dan transaksi untuk admin terverifikasi.
-- **Berita & Konten**: CRUD berita lengkap dengan kategori, tag, status aktif, dan unggahan foto.
-- **Event & Pemesanan**: Kelola event berbayar/gratis, akun bank, dan order tiket beserta validasi pembayaran, check-in, dan catatan layanan.
+- **Dasbor**: Ringkasan jumlah peserta, acara, dan order yang harus ditindak.
+- **Berita & Konten**: CRUD berita beserta kategori, tag, status aktif, dan unggahan foto.
+- **Acara & Order**: Kelola acara gratis/berbayar, akun bank, order tiket, bukti bayar, check-in, dan catatan.
 - **Partisipan & Organisasi**: Data generasi, posisi, permintaan jabatan, struktur kepemimpinan dinamis, dan banner beranda.
-- **Aktivitas Internal**: Agenda rapat/kegiatan dengan cakupan posisi tertentu, laporan kehadiran, serta keterkaitan posisi yang terlibat.
-- **Visi & Misi**: Modul sederhana untuk menampilkan daftar visi/ misi organisasi dengan status aktif.
+- **Aktivitas Internal**: Jadwal rapat/kegiatan, laporan kehadiran, serta pembatasan posisi yang boleh ikut.
+- **Visi & Misi**: Daftar visi/misi aktif yang ditampilkan ke publik.
 
 ## Teknologi
 - Laravel 12 (PHP 8.2) + Breeze untuk autentikasi.
-- Blade + TailwindCSS + Vite + Alpine.js untuk UI reaktif.
-- MySQL/PostgreSQL kompatibel melalui Eloquent ORM dengan UUID sebagai kunci utama domain inti.
+- Blade, TailwindCSS, Vite, dan Alpine.js untuk antarmuka.
+- Database relasional (MySQL/PostgreSQL) dengan UUID pada tabel domain.
 
 ## Persiapan Lingkungan
-1. **Kebutuhan**: PHP 8.2+, Composer 2.x, Node.js 18+, npm 9+, dan database MySQL/PostgreSQL.
-2. **Konfigurasi awal**
+1. **Syarat**: PHP 8.2+, Composer 2, Node.js 18+, npm 9+, dan server database.
+2. **Instalasi dasar**
    ```bash
    cp .env.example .env
    composer install
    php artisan key:generate
    npm install
    ```
-3. **Sesuaikan `.env`** pada bagian database, mail, storage (S3/local), dan konfigurasi queue bila diperlukan.
-4. **Migrasi & seed** (opsional seed manual jika sudah tersedia):
+3. **Atur `.env`** untuk koneksi database, pengiriman email, dan penyimpanan berkas.
+4. **Migrasi**
    ```bash
    php artisan migrate
    ```
 
 ## Menjalankan Aplikasi
 ```bash
-# mode pengembangan
-composer run dev
+composer run dev      # jalankan mode pengembangan lengkap
 
-# atau manual
+# atau jalankan manual
 php artisan serve
 npm run dev
 ```
 
-Untuk build produksi:
+Build produksi:
 ```bash
 npm run build
 php artisan config:cache route:cache view:cache
 ```
 
-## Arsitektur Tingkat Tinggi
+## Arsitektur Singkat
 ```mermaid
 graph TD
-    subgraph Client
-        UI[Blade + Tailwind UI]
+    subgraph "Klien"
+        UI[UI Blade + Tailwind]
     end
 
-    subgraph Server (Laravel)
-        Auth[Auth & Policy]
-        CMS[News & Vision/Mission]
-        Activities[Activities & Attendance]
-        Events[Events & Orders]
-        Org[Participants & Leadership]
+    subgraph "Server Laravel"
+        Auth[Autentikasi & Kebijakan]
+        Konten[Berita + Visi Misi]
+        Kegiatan[Kegiatan & Kehadiran]
+        Acara[Acara & Order]
+        Organisasi[Peserta & Struktur]
     end
 
-    subgraph External
-        Storage[(Storage/S3)]
-        DB[(Relational DB)]
+    subgraph "Layanan Pendukung"
+        Berkas[(Penyimpanan)]
+        BasisData[(Database)]
     end
 
-    UI -->|HTTP| Auth
-    UI --> CMS
-    UI --> Activities
-    UI --> Events
-    UI --> Org
-    Auth --> DB
-    CMS --> DB
-    Activities --> DB
-    Events --> DB
-    Org --> DB
-    CMS --> Storage
-    Events --> Storage
-    Org --> Storage
+    UI --> Auth
+    UI --> Konten
+    UI --> Kegiatan
+    UI --> Acara
+    UI --> Organisasi
+    Auth --> BasisData
+    Konten --> BasisData
+    Kegiatan --> BasisData
+    Acara --> BasisData
+    Organisasi --> BasisData
+    Konten --> Berkas
+    Acara --> Berkas
+    Organisasi --> Berkas
 ```
 
 ## ERD Singkat
@@ -137,37 +136,37 @@ classDiagram
     }
 
     class EventOrderService {
-        +createOrder()
-        +approve()
-        +reject()
+        +buatOrder()
+        +setujui()
+        +tolak()
         +checkIn()
     }
 
     class Participant {
         +uuid id
-        +string name
+        +string nama
         +hasMany Position
     }
 
     class Activity {
         +uuid id
-        +string name
+        +string nama
         +hasMany ActivityReport
     }
 
     class ActivityReport {
         +uuid id
         +enum status
-        +timestamp checked_in_at
+        +timestamp dicatat
     }
 
-    DashboardController --> NewsController : menampilkan ringkasan
-    DashboardController --> EventController : statistik event
-    EventController --> EventOrderService : koordinasi pemesanan
+    DashboardController --> NewsController : ringkasan konten
+    DashboardController --> EventController : ringkasan acara
+    EventController --> EventOrderService : proses order
     EventOrderService --> Participant : validasi peserta
-    EventOrderService --> Event : ketersediaan kuota
-    Activity --> ActivityReport : laporan hadir
-    Participant --> ActivityReport : status partisipan
+    EventOrderService --> Event : stok tiket
+    Activity --> ActivityReport : hasil kegiatan
+    Participant --> ActivityReport : status kehadiran
 ```
 
 > **Catatan**: Semua tabel domain inti menggunakan UUID sehingga perhatikan dukungan DB ketika melakukan dump/import.
@@ -176,7 +175,7 @@ classDiagram
 ```bash
 php artisan test
 ```
-Pastikan membuat database khusus pengujian (lihat `phpunit.xml`) agar tidak mencampur data produksi.
+Gunakan database pengujian terpisah (lihat `phpunit.xml`) supaya data produksi aman.
 
 ## Lisensi
-Kode ini mengikuti lisensi MIT bawaan Laravel kecuali dinyatakan berbeda dalam repositori ini.
+Kode ini mengikuti lisensi MIT bawaan Laravel kecuali ada ketentuan lain pada repositori ini.
