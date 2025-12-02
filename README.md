@@ -115,9 +115,9 @@ erDiagram
     }
 ```
 
-## UML Diagram - Sistem Pendaftaran Anggota
+## UML - Sistem Pendaftaran Anggota
 
-📄 **[Lihat UML Diagram Lengkap](docs/UML_DIAGRAM.md)**
+📄 **[Lihat UML](docs/UML_DIAGRAM.md)**
 
 ```mermaid
 graph LR
