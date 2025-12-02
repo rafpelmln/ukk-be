@@ -126,20 +126,20 @@ graph LR
     ANGGOTA["👤 ANGGOTA"]
 
     subgraph Sistem["Sistem Pendaftaran Anggota FOSJABAR"]
-        UC1("Buat Position Guest")
-        UC2("Buat Generasi")
-        UC3("Buka Pendaftaran")
-        UC4("Register")
-        UC5("Login")
-        UC6("Dashboard Tamu")
-        UC7("Ajukan Jadi Anggota")
-        UC8("Buat Participant Position Request")
-        UC9("Lihat Pengajuan")
-        UC10("Review & Approve")
-        UC11("Update Status")
-        UC12("Ajukan Jadi Pengurus")
-        UC13("Buat Request Pengurus")
-        UC14("Approve Pengurus")
+        UC1(["Buat Position Guest"])
+        UC2(["Buat Generasi"])
+        UC3(["Buka Pendaftaran"])
+        UC4(["Register"])
+        UC5(["Login"])
+        UC6(["Dashboard Tamu"])
+        UC7(["Ajukan Jadi Anggota"])
+        UC8(["Buat Participant Position Request"])
+        UC9(["Lihat Pengajuan"])
+        UC10(["Review & Approve"])
+        UC11(["Update Status"])
+        UC12(["Ajukan Jadi Pengurus"])
+        UC13(["Buat Request Pengurus"])
+        UC14(["Approve Pengurus"])
     end
 
     ADMIN --- UC1
