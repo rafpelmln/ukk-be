@@ -130,14 +130,6 @@ Anggota → Ajukan Jadi Pengurus → Admin Approve → Status: Pengurus
 
 ---
 
-## Relasi:
-- **<<include>>** - Proses yang pasti terjadi (misal: registrasi pasti set status guest)
-- **<<extend>>** - Proses tambahan yang bisa terjadi (misal: buka pendaftaran setelah buat generasi)
-- **<<create>>** - Membuat data baru
-- **<<update>>** - Update status/data
-
----
-
 ## Alur Sederhana:
 
 ```
