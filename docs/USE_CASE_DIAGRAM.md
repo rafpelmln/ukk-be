@@ -41,8 +41,8 @@ graph LR
     UC10 -.->|include| UC11
     UC12 -.->|include| UC13
 
-    classDef actor fill:#e1f5ff,stroke:#333,stroke-width:2px
-    classDef usecase fill:#fff,stroke:#333,stroke-width:1px
+    classDef actor fill:#e1f5ff,stroke:#333,stroke-width:2px,color:#000
+    classDef usecase fill:#fff,stroke:#333,stroke-width:1px,color:#000
     class ADMIN,GUEST,ANGGOTA actor
     class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11,UC12,UC13,UC14 usecase
 ```
