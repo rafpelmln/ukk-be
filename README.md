@@ -83,6 +83,7 @@ graph TD
 ## ERD Singkat
 
 ![ERD FosjaBar](public/foto/erd/erd.jpg)
+![ERD FosjaBar Lengkap](public/foto/erd/fosjabar.png)
 
 ```mermaid
 erDiagram
