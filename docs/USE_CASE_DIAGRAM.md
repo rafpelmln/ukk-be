@@ -2,6 +2,60 @@
 
 ## Use Case Diagram
 
+```mermaid
+graph LR
+    ADMIN[<center><img src='https://f.hubspotusercontent00.net/hubfs/3766864/stickman-actor.png' width='30'><br/>ADMIN/<br/>PENGURUS</center>]
+    GUEST[<center><img src='https://f.hubspotusercontent00.net/hubfs/3766864/stickman-actor.png' width='30'><br/>GUEST</center>]
+    ANGGOTA[<center><img src='https://f.hubspotusercontent00.net/hubfs/3766864/stickman-actor.png' width='30'><br/>ANGGOTA</center>]
+
+    subgraph "Sistem Pendaftaran Anggota FOSJABAR"
+        UC1(Buat Position Guest)
+        UC2(Buat Generasi)
+        UC3(Buka Pendaftaran)
+        UC4(Register)
+        UC5(Login)
+        UC6(Dashboard Tamu)
+        UC7(Ajukan Jadi Anggota)
+        UC8(Buat Participant<br/>Position Request)
+        UC9(Lihat Pengajuan)
+        UC10(Review & Approve)
+        UC11(Update Status)
+        UC12(Ajukan Jadi Pengurus)
+        UC13(Buat Request Pengurus)
+        UC14(Approve Pengurus)
+    end
+
+    ADMIN --- UC1
+    ADMIN --- UC2
+    ADMIN --- UC9
+    ADMIN --- UC14
+    GUEST --- UC4
+    GUEST --- UC6
+    GUEST --- UC7
+    ANGGOTA --- UC12
+
+    UC2 -.->>|<<include>>| UC3
+    UC4 -.->>|<<include>>| UC5
+    UC7 -.->>|<<include>>| UC8
+    UC9 -.->>|<<include>>| UC10
+    UC10 -.->>|<<include>>| UC11
+    UC12 -.->>|<<include>>| UC13
+
+    classDef actor fill:#ffffff,stroke:none;
+    class ADMIN,GUEST,ANGGOTA actor;
+    classDef usecase fill:#ffffff,stroke:#333,stroke-width:1px;
+    style "Sistem Pendaftaran Anggota FOSJABAR" fill:#ffffff,stroke:#333,stroke-width:2px,color:#000;
+    linkStyle 0,1,2,3,4,5,6,7 stroke-width:2px,fill:none,stroke:#333;
+    linkStyle 8,9,10,11,12,13 stroke-width:1px,fill:none,stroke:#333,stroke-dasharray: 5 5;
+```
+
+---
+
+## Diagram ASCII (Alternatif)
+
+<details>
+<summary>Klik untuk lihat versi ASCII</summary>
+
 ```
                                  ┌─────────────────────────────────────────────────┐
                                  │                                                 │
@@ -67,6 +121,8 @@
                                  │                                                 │
                                  └─────────────────────────────────────────────────┘
 ```
+
+</details>
 
 ---
 
