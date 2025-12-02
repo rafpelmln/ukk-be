@@ -115,7 +115,19 @@ erDiagram
     }
 ```
 
-## UML Singkat
+## UML Use Case - Sistem Pendaftaran Anggota
+
+📄 **[Lihat Use Case Diagram Lengkap](docs/USE_CASE_DIAGRAM.md)**
+
+### Alur Singkat:
+1. **Admin** membuat Position Guest & Generasi → Buka Pendaftaran
+2. **Guest** Register → Login → Dashboard Tamu → Ajukan Jadi Anggota
+3. **Admin** Review & Approve → Guest jadi Anggota
+4. **Anggota** bisa ajukan jadi Pengurus → Admin Approve
+
+---
+
+## UML Class Diagram
 ```mermaid
 classDiagram
     class DashboardController {
