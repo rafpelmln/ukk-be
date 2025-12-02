@@ -1,62 +1,182 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FosjaBar System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Panel administrasi internal untuk Forum OSIS Jawa Barat. Aplikasi ini berfungsi sebagai pusat kendali konten (berita, kegiatan, event publik), manajemen partisipan, struktur kepemimpinan, serta penjualan tiket event dengan alur pembayaran terkontrol.
 
-## About Laravel
+## Fitur Utama
+- **Dashboard**: Statistik cepat peserta, event, dan transaksi untuk admin terverifikasi.
+- **Berita & Konten**: CRUD berita lengkap dengan kategori, tag, status aktif, dan unggahan foto.
+- **Event & Pemesanan**: Kelola event berbayar/gratis, akun bank, dan order tiket beserta validasi pembayaran, check-in, dan catatan layanan.
+- **Partisipan & Organisasi**: Data generasi, posisi, permintaan jabatan, struktur kepemimpinan dinamis, dan banner beranda.
+- **Aktivitas Internal**: Agenda rapat/kegiatan dengan cakupan posisi tertentu, laporan kehadiran, serta keterkaitan posisi yang terlibat.
+- **Visi & Misi**: Modul sederhana untuk menampilkan daftar visi/ misi organisasi dengan status aktif.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Teknologi
+- Laravel 12 (PHP 8.2) + Breeze untuk autentikasi.
+- Blade + TailwindCSS + Vite + Alpine.js untuk UI reaktif.
+- MySQL/PostgreSQL kompatibel melalui Eloquent ORM dengan UUID sebagai kunci utama domain inti.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Persiapan Lingkungan
+1. **Kebutuhan**: PHP 8.2+, Composer 2.x, Node.js 18+, npm 9+, dan database MySQL/PostgreSQL.
+2. **Konfigurasi awal**
+   ```bash
+   cp .env.example .env
+   composer install
+   php artisan key:generate
+   npm install
+   ```
+3. **Sesuaikan `.env`** pada bagian database, mail, storage (S3/local), dan konfigurasi queue bila diperlukan.
+4. **Migrasi & seed** (opsional seed manual jika sudah tersedia):
+   ```bash
+   php artisan migrate
+   ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Menjalankan Aplikasi
+```bash
+# mode pengembangan
+composer run dev
 
-## Learning Laravel
+# atau manual
+php artisan serve
+npm run dev
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Untuk build produksi:
+```bash
+npm run build
+php artisan config:cache route:cache view:cache
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Arsitektur Tingkat Tinggi
+```mermaid
+graph TD
+    subgraph Client
+        UI[Blade + Tailwind UI]
+    end
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    subgraph Server (Laravel)
+        Auth[Auth & Policy]
+        CMS[News & Vision/Mission]
+        Activities[Activities & Attendance]
+        Events[Events & Orders]
+        Org[Participants & Leadership]
+    end
 
-## Laravel Sponsors
+    subgraph External
+        Storage[(Storage/S3)]
+        DB[(Relational DB)]
+    end
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+    UI -->|HTTP| Auth
+    UI --> CMS
+    UI --> Activities
+    UI --> Events
+    UI --> Org
+    Auth --> DB
+    CMS --> DB
+    Activities --> DB
+    Events --> DB
+    Org --> DB
+    CMS --> Storage
+    Events --> Storage
+    Org --> Storage
+```
 
-### Premium Partners
+## ERD Singkat
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+![ERD FosjaBar](public/foto/erd/erd.jpg)
 
-## Contributing
+```mermaid
+erDiagram
+    USERS ||--o{ NEWS : author
+    NEWS }o--|| NEWS_CATEGORIES : belongs_to
+    NEWS }o--o{ TAGS : tagged
+    EVENTS ||--o{ EVENT_ORDERS : has
+    EVENT_ORDERS }o--|| PARTICIPANTS : placed_by
+    EVENT_ORDERS }o--|| BANK_ACCOUNTS : via
+    PARTICIPANTS }o--|| GENERATIONS : enrolled_in
+    PARTICIPANTS }o--o{ POSITIONS : holds
+    PARTICIPANTS ||--o{ PARTICIPANT_POSITION_REQUESTS : requests
+    ACTIVITIES }o--o{ POSITIONS : target
+    ACTIVITIES ||--o{ ACTIVITY_REPORTS : attendance
+    ACTIVITY_REPORTS }o--|| PARTICIPANTS : recorded_for
+    LEADERSHIP_STRUCTURES ||--o{ LEADERSHIP_STRUCTURE_ROLES : has
+    LEADERSHIP_STRUCTURES }o--|| GENERATIONS : references
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    VISION_MISSION_ENTRIES {
+        uuid id
+        enum type
+        text content
+    }
 
-## Code of Conduct
+    HOME_BANNERS {
+        int id
+        string title
+        bool is_active
+    }
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## UML Singkat
+```mermaid
+classDiagram
+    class DashboardController {
+        +index()
+    }
 
-## Security Vulnerabilities
+    class NewsController {
+        +index()
+        +store()
+        +update()
+        +destroy()
+    }
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    class EventController {
+        +index()
+        +store()
+        +update()
+        +destroy()
+    }
 
-## License
+    class EventOrderService {
+        +createOrder()
+        +approve()
+        +reject()
+        +checkIn()
+    }
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# fosjabar-system
+    class Participant {
+        +uuid id
+        +string name
+        +hasMany Position
+    }
+
+    class Activity {
+        +uuid id
+        +string name
+        +hasMany ActivityReport
+    }
+
+    class ActivityReport {
+        +uuid id
+        +enum status
+        +timestamp checked_in_at
+    }
+
+    DashboardController --> NewsController : menampilkan ringkasan
+    DashboardController --> EventController : statistik event
+    EventController --> EventOrderService : koordinasi pemesanan
+    EventOrderService --> Participant : validasi peserta
+    EventOrderService --> Event : ketersediaan kuota
+    Activity --> ActivityReport : laporan hadir
+    Participant --> ActivityReport : status partisipan
+```
+
+> **Catatan**: Semua tabel domain inti menggunakan UUID sehingga perhatikan dukungan DB ketika melakukan dump/import.
+
+## Testing
+```bash
+php artisan test
+```
+Pastikan membuat database khusus pengujian (lihat `phpunit.xml`) agar tidak mencampur data produksi.
+
+## Lisensi
+Kode ini mengikuti lisensi MIT bawaan Laravel kecuali dinyatakan berbeda dalam repositori ini.
