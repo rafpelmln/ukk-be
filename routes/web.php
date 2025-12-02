@@ -78,7 +78,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::resource('generations', GenerationController::class)->except(['show']);
-    Route::resource('participants', ParticipantController::class)->except(['show']);
+    Route::resource('participants', ParticipantController::class);
     Route::resource('positions', PositionController::class)->except(['show']);
     Route::patch('positions/{position}/toggle', [PositionController::class, 'toggle'])->name('positions.toggle');
 

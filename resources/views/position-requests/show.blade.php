@@ -154,6 +154,10 @@
                         </p>
                     </div>
                     <div>
+                        <p class="text-sm text-gray-500">Asal Sekolah</p>
+                        <p class="text-gray-900 font-semibold">{{ $positionRequest->participant->from_school }}</p>
+                    </div>
+                    <div>
                         <p class="text-sm text-gray-500">Generasi</p>
                         <p class="text-gray-900 font-semibold">{{ $positionRequest->participant->generation->name ?? '-' }}</p>
                     </div>
@@ -170,12 +174,12 @@
                             @endif
                         </div>
                     </div>
-                    <a
+                    <!-- <a
                         href="{{ route('participants.show', $positionRequest->participant) }}"
                         class="mt-4 block rounded-lg bg-emerald-50 px-4 py-2 text-center text-sm font-semibold text-emerald-600 transition hover:bg-emerald-100"
                     >
                         Lihat Profil Peserta
-                    </a>
+                    </a> -->
                 </div>
             </div>
 
